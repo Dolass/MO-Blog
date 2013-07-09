@@ -1,0 +1,67 @@
+﻿<include file="nav" />
+<div class="nav">首页 &gt; <a href="{$$MO_ROOT}?m=admin&a=article">文章管理</a> &gt; <eq name="id" value="0">发表</else>修改</eq>文章</div>
+<div class="right_main">
+<form action="{$$MO_ROOT}?m=admin&a=articlesave&page={$Mo.get.page}" method="post" onsubmit="this['ClassName'].value=this['ClassID'].options[this['ClassID'].selectedIndex].innerHTML;">
+<input type="hidden" name="ClassName" value="{$ClassName}" />
+<input type="hidden" name="id" value="{$id}" />
+<h3>标题:</h3><input type="text" name="Title" class="inputText width_350" value="{$Title}" /> <select style="padding:2px" name="ClassID">
+<loop name="classes">
+<option value="{$classes.ID}"<eq name="classes.ID" value="{$ClassID}"> selected</eq>><nempty name="classes.Class_PName">{$classes.Class_PName} -> </nempty>{$classes.Class_Name}</option>
+</loop>
+</select>&nbsp; &nbsp; &nbsp;
+<input type="radio" name="Is_Secret" value="0"<empty name="Is_Secret"> checked="checked"</empty><eq name="Is_Secret" value="0"> checked="checked"</eq> />显示
+<input type="radio" name="Is_Secret" value="1"<eq name="Is_Secret" value="1"> checked="checked"</eq> />不显示&nbsp; &nbsp; &nbsp;
+<input type="radio" name="Is_Top" value="1"<eq name="Is_Top" value="1"> checked="checked"</eq> />置顶
+<input type="radio" name="Is_Top"<empty name="Is_Top"> checked="checked"</empty> value="0"<eq name="Is_Top" value="0"> checked="checked"</eq> />不置顶&nbsp; &nbsp; &nbsp;
+<input type="radio" name="can_comment"<empty name="can_comment"> checked="checked"</empty>  value="1"<eq name="can_comment" value="1"> checked="checked"</eq> />允许评论
+<input type="radio" name="can_comment" value="0"<eq name="can_comment" value="0"> checked="checked"</eq> />不允许评论<br />
+<h3>内容:</h3><textarea name="Content" cols="80" rows="10" class="inputTextArea" id="iContent">{$Content}</textarea>
+<div class="box">
+    <div class="left">
+    	<h3>日期:</h3><input type="text" name="AddDate" class="inputText width_200" value="{$AddDate:F.formatdate="yyyy-MM-dd HH:mm:ss"}" />
+    </div>
+    <div class="left">
+    	<h3>作者:</h3><input type="text" name="Actor" class="inputText width_200" value="{$Actor}" />
+    </div>
+</div>
+<div class="box">
+    <div class="left">
+    	<h3>来源:</h3><input type="text" name="FromU" class="inputText width_200" value="<empty name="FromU">原创</else>{$FromU}</empty>" />
+    </div>
+    <div class="left">
+        <h3>标签:</h3><input type="text" name="Tags" class="inputText width_200" value="{$Tags}" />
+    </div>
+</div>
+<div class="box">
+    <div class="left">
+    	<h3>引用通告:</h3><input type="text" name="trackback" class="inputText width_200" value="{$trackback}" />
+    </div>
+    <div class="left">
+        <h3>现在引用:</h3> <input type="checkbox" name="trackping:i" value="yes" />现在引用（选中本项，将立即进行TrackPing操作，否则仅仅在新发表日志时操作）
+    </div>
+</div><br />
+<input type="submit" class="inputButton" value="<eq name="id" value="0">立即发表</else>保存修改</eq>" /> 
+<input type="button" class="inputButton" value="返回列表" onclick="window.location='{$$MO_ROOT}?m=admin&a=article'" />
+</form>
+<js href="{$$MO_ROOT}scripts/editor/kindeditor.js" />
+<js href="{$$MO_ROOT}scripts/editor/plugins/pagebreak/pagebreak.js" />
+<js href="{$$MO_ROOT}scripts/editor/plugins/code/code.js" />
+<js href="{$$MO_ROOT}scripts/editor/lang/zh_CN.js" />
+<script type="text/javascript">
+var editor;
+KindEditor.ready(function(K) {
+	editor = K.create('textarea[name="Content"]', {
+		resizeType : 0,
+		height:260,
+		width:700,
+		allowPreviewEmoticons : false,
+		allowImageUpload : false,
+		items : [
+			'source','|','fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+			'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
+			'insertunorderedlist', '|', 'emoticons', 'image', 'anchor', 'link', 'unlink', 'insertfile','|','pagebreak','code','|','lineheight','plainpaste','table']
+	});
+});
+</script>
+</div>
+<include file="foot" />

@@ -1,0 +1,65 @@
+﻿<include file="nav" />
+<div class="nav">首页 &gt; 站点设置</div>
+<div class="right_main">
+<form action="{$$MO_ROOT}?m=admin&a=savesystem&refer=yes" method="post">
+<input type="hidden" name="id" value="{$ID}" />
+<table width="100%" cellpadding="4" cellspacing="0" border="0" style="border-collapse:collapse">
+	<switch name="Mo.get.base"><case value="" />
+    <tr><td width="100" height="28" align="right">博客标题：</td><td><input class="inputText width_600" name="blog_title" value="{$blog_title}" /></td></tr>
+    <tr><td height="28" align="right">博客副标题：</td><td><input class="inputText width_600" name="blog_sub_title" value="{$blog_sub_title}" /></td></tr>
+    <tr><td height="28" align="right">浏览器标题：</td><td><input class="inputText width_600" name="title" value="{$title}" /></td></tr>
+    <tr><td height="28" align="right">博客地址：</td><td><input class="inputText width_600" name="blog_hostname" value="{$blog_hostname}" />*不能以/结尾</td></tr>
+    <tr><td height="28" align="right">博客版权信息：</td><td><input class="inputText width_600" name="blog_copy_right" value="{$blog_copy_right}" /></td></tr>
+    <tr><td height="28" align="right">博客邮箱：</td><td><input class="inputText width_600" name="blog_email" value="{$blog_email}" /></td></tr>
+    <tr><td height="28" align="right">博客描述：</td><td><textarea class="inputTextArea height_50" name="blog_description">{$blog_description}</textarea></td></tr>
+    <tr><td height="28" align="right">博客关键字：</td><td><input class="inputText width_600" type="text" name="blog_keyword" value="{$blog_keyword}" /></td></tr>
+    <tr><td height="28" align="right">博主名字：</td><td><input class="inputText" type="text" name="Master_Name" value="{$Master_Name}" />
+    博主昵称：&nbsp; <input class="inputText" type="text" name="Master_NickName" value="{$Master_NickName}" /></td></tr>
+    <tr><td height="28" align="right">博主性别：</td><td><input class="inputText" type="text" name="Master_Sex" value="{$Master_Sex}" />
+    博主生日：&nbsp; <input class="inputText" type="text" name="Master_Birthday" value="{$Master_Birthday}" /></td></tr>
+    <tr><td height="28" align="right">博主星座：</td><td><input class="inputText" type="text" name="Master_Star" value="{$Master_Star}" />
+    博主血型：&nbsp; <input class="inputText" type="text" name="Master_blood" value="{$Master_blood}" /></td></tr>
+    <tr><td height="28" align="right">博客简介：</td><td><textarea class="inputTextArea height_50" name="Master_selfIntro">{$Master_selfIntro}</textarea></td></tr>
+    <case value="adv" />
+    <tr><td width="100" height="28" align="right">访问超时时间：</td><td><input type="text" class="inputText" name="blog_visit_timeout" value="{$blog_visit_timeout}" />分钟（超时时间内，访问同一篇文章不重复计数）</td></tr>
+        <tr><td width="100" height="28" align="right">邮件通知功能：</td><td><input type="radio" name="blog_allow_mail_send" value="yes"<eq name="blog_allow_mail_send" value="yes"> checked="checked"</eq> />开启
+        <input type="radio" name="blog_allow_mail_send" value="no"<neq name="blog_allow_mail_send" value="yes"> checked="checked"</neq> />关闭</td></tr>
+    <tr><td width="100" height="28" align="right">SMTP服务器：</td><td><input class="inputText" name="blog_mail_server" value="{$blog_mail_server}" /></td></tr>
+   <tr><td width="100" height="28" align="right"> SMTP用户名：</td><td><input class="inputText" name="blog_mail_username" value="{$blog_mail_username}" /></td></tr>
+   <tr><td width="100" height="28" align="right"> SMTP密码：</td><td><input class="inputText" name="blog_mail_password" value="{$blog_mail_password}" /></td></tr>
+    <tr><td width="100" height="28" align="right">发信邮箱：</td><td><input class="inputText" name="blog_mail_sender" value="{$blog_mail_sender}" /></td></tr>
+    <tr><td width="100" height="28" align="right">显示名称：</td><td><input class="inputText" name="blog_mail_display" value="{$blog_mail_display}" /></td></tr>
+    <tr><td width="100" height="28" align="right">博客功能开关：</td><td>
+    <span class="blod">开启Ping：</span>
+     <input type="radio" name="blog_ping_opened" value="yes"<eq name="blog_ping_opened" value="yes"> checked="checked"</eq> />是
+        <input type="radio" name="blog_ping_opened" value="no"<neq name="blog_ping_opened" value="yes"> checked="checked"</neq> />否&nbsp; &nbsp; 
+        <span class="blod">允许评论：</span>
+     <input type="radio" name="blog_allow_comments" value="yes"<eq name="blog_allow_comments" value="yes"> checked="checked"</eq> />是
+        <input type="radio" name="blog_allow_comments" value="no"<neq name="blog_allow_comments" value="yes"> checked="checked"</neq> />否&nbsp; &nbsp; 
+        <span class="blod">允许留言：</span>
+     <input type="radio" name="blog_allow_guestbook" value="yes"<eq name="blog_allow_guestbook" value="yes"> checked="checked"</eq> />是
+        <input type="radio" name="blog_allow_guestbook" value="no"<neq name="blog_allow_guestbook" value="yes"> checked="checked"</neq> />否&nbsp; &nbsp; 
+        <span class="blod">留言/评论需审核：</span>
+     <input type="radio" name="blog_comments_check" value="yes"<eq name="blog_comments_check" value="yes"> checked="checked"</eq> />是
+        <input type="radio" name="blog_comments_check" value="no"<neq name="blog_comments_check" value="yes"> checked="checked"</neq> />否<br />
+        <span class="blod">允许申请友情链接：</span>
+     <input type="radio" name="blog_allow_apply_links" value="yes"<eq name="blog_allow_apply_links" value="yes"> checked="checked"</eq> />是
+        <input type="radio" name="blog_allow_apply_links" value="no"<neq name="blog_allow_apply_links" value="yes"> checked="checked"</neq> />否<br />
+        <span class="blod">关闭博客：</span>
+     <input type="radio" name="blog_state_closed" value="yes"<eq name="blog_state_closed" value="yes"> checked="checked"</eq> />是
+        <input type="radio" name="blog_state_closed" value="no"<neq name="blog_state_closed" value="yes"> checked="checked"</neq> />否<br />
+        <span class="blod">关闭原因：</span><input class="inputText width_600" name="blog_state_closed_reason" value="{$blog_state_closed_reason}" />
+    </td></tr>
+    <tr><td width="100" height="28" align="right">黑/白名单模式：</td><td>
+    <input type="radio" name="blog_block_mode" value="none"<eq name="blog_block_mode" value="none"> checked="checked"</eq> />不启用
+<input type="radio" name="blog_block_mode" value="black"<eq name="blog_block_mode" value="black"> checked="checked"</eq> />启用黑名单
+<input type="radio" name="blog_block_mode" value="white"<eq name="blog_block_mode" value="white"> checked="checked"</eq> />启用白名单</td></tr>
+    <tr><td width="100" height="28" align="right">黑名单IP：</td><td><textarea class="inputTextArea height_50" name="blog_block_black">{$blog_block_black}</textarea>（每行一个或者用,分割）</td></tr>
+    <tr><td width="100" height="28" align="right">白名单IP：</td><td><textarea class="inputTextArea height_50" name="blog_block_white">{$blog_block_white}</textarea>（每行一个或者用,分割）</td></tr>
+    </switch>
+    <tr><td height="28" align="right">&nbsp;</td><td><input type="submit" value="保存" class="inputButton" />
+    </td></tr>
+</table>
+</form>
+</div>
+<include file="foot" />

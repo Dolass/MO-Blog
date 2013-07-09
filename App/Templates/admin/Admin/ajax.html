@@ -1,0 +1,42 @@
+﻿<switch name="mo.get.for"><case value="link" /><form action="{$$MO_ROOT}?m=ajax&a=savelinks" method="post" name="frmsubmit">
+<input type="hidden" name="id" value="{$id}" />
+<h3>标题:</h3><input type="text" name="title" value="{$Link.title}" class="inputText width_200" /><br />
+<h3>URL地址:</h3><input type="text" name="url" value="{$Link.url}" class="inputText width_200" /><br />
+<h3>LOGO地址:</h3><input type="text" name="image_" value="{$Link.image_}" class="inputText width_200" /><br />
+<h3>作者:</h3><input type="text" name="author" value="{$Link.author}" class="inputText width_200" /><br />
+<h3>审核:</h3>
+<input type="radio" name="ischecked" value="0"<eq name="Link.ischecked" value="0"> checked="checked"</eq> />未审核
+<input type="radio" name="ischecked" value="1"<eq name="Link.ischecked" value="1"> checked="checked"</eq> />通过
+<input type="radio" name="ischecked" value="2"<eq name="Link.ischecked" value="2"> checked="checked"</eq> />未通过
+<br />
+<h3>排序:</h3><input type="text" name="link_order" value="{$Link.link_order}" class="inputText width_200" /><br />
+<h3>图片链接:</h3>
+<input type="radio" name="isimage" value="1"<eq name="Link.isimage" value="1"> checked="checked"</eq> />是
+<input type="radio" name="isimage" value="0"<eq name="Link.isimage" value="0"> checked="checked"</eq> />不是
+</form>
+<case value="album" /><form action="{$$MO_ROOT}?m=ajax&a=savealbum" method="post" name="frmsubmit">
+<input type="hidden" name="id" value="{$id}" />
+<input type="hidden" name="create_date" value="{$Album.create_date:F.formatdate="yyyy-MM-dd HH:mm:ss"}" />
+<h3>名称:</h3><input type="text" name="name" value="{$Album.name}" class="inputText width_200" /><br />
+<h3>地点:</h3><input type="text" name="address" value="{$Album.address}" class="inputText width_200" /><br />
+<h3>拍照时间:</h3><input type="text" name="photo_date" value="{$Album.photo_date:F.formatdate="yyyy-MM-dd HH:mm:ss"}" class="inputText width_200" /><br />
+<h3>相册描述:</h3><input type="text" name="description" value="{$Album.description}" class="inputText width_200" /><br />
+<h3>排序:</h3><input type="text" name="orderby" value="{$Album.orderby}" class="inputText width_200" /><br />
+<h3>私人相册:</h3>
+<input type="radio" name="issecret" value="n"<eq name="Album.issecret" value="n"> checked="checked"</eq><empty name="Album.issecret"> checked="checked"</empty> />不是
+<input type="radio" name="issecret" value="y"<eq name="Album.issecret" value="y"> checked="checked"</eq> />是<br />
+<h3>标签:</h3><input type="text" name="tag" value="<empty name="Album.tag">{$Album.tag:Md5}</else>{$Album.tag}</empty>" class="inputText width_200" /><br />
+</form>
+<case value="photo" /><form action="{$$MO_ROOT}?m=ajax&a=savephoto&albumid={$Photo.albumid}" method="post" name="frmsubmit">
+<input type="hidden" name="id" value="{$id}" />
+<input type="hidden" name="create_date" value="{$Photo.create_date:F.formatdate="yyyy-MM-dd HH:mm:ss"}" />
+<h3>名称:</h3><input type="text" name="name" value="{$Photo.name}" class="inputText width_200" /><br />
+<h3>拍照时间:</h3><input type="text" name="photo_date" value="<nempty name="Photo.photo_date">{$Photo.photo_date:F.formatdate="yyyy-MM-dd HH:mm:ss"}</nempty>" class="inputText width_200" /><br />
+<h3>照片描述:</h3><input type="text" name="description" value="{$Photo.description}" class="inputText width_200" /><br />
+<h3>排序:</h3><input type="text" name="orderby" value="{$Photo.orderby}" class="inputText width_200" /><br />
+<h3>封面:</h3>
+<input type="radio" name="isfirst" value="0"<eq name="Photo.isfirst" value="0"> checked="checked"</eq><empty name="Photo.isfirst"> checked="checked"</empty> />不是
+<input type="radio" name="isfirst" value="1"<eq name="Photo.isfirst" value="1"> checked="checked"</eq> />是<br />
+</form>
+<case value="error" />{$Errmessage}
+</switch>

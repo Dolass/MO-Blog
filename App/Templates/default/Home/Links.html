@@ -1,0 +1,75 @@
+﻿<include file="Head" />
+<div id="mo-body-left">
+    <div class="mo-box-left mo-linksimage">
+        <div class="mo-box-left-content">
+            <h2>图片链接</h2>
+        	<ul class="clearfix">
+            <loop name="LinksImage" eof="&lt;li&gt;木有啊！&lt;/li&gt;">
+            	<li><a href="{$LinksImage.url}" onclick="return clicklink({$LinksImage.id});" target="_blank" title="{$LinksImage.author}=>{$LinksImage.title}"><img src="{$LinksImage.image_}" width="88" height="31" alt="{$LinksImage.author}=>{$LinksImage.title}" /></a></li>
+            </loop>
+            </ul>
+        </div>
+    </div>
+    <div class="mo-box-left mo-linkstext">
+        <div class="mo-box-left-content">
+            <h2>文字链接</h2>
+        	<ul class="clearfix">
+            <loop name="LinksText" eof="&lt;li&gt;空的哎！&lt;/li&gt;">
+            	<li><a href="{$LinksText.url}" onclick="return clicklink({$LinksText.id});" target="_blank" title="{$LinksText.author}=>{$LinksText.title}">{$LinksText.title}</a></li>
+            </loop>
+            </ul>
+        </div>
+    </div>
+    <eq name="System.blog_allow_apply_links" value="yes">
+    <div class="mo-box-left mo-linksimage">
+        <div class="mo-box-left-content">
+            <h2>申请友情链接</h2>
+        	<form action="{$$MO_ROOT}?m=home&a=apply" method="post" onsubmit="return CheckLinksPost(this);">
+            	<h3>网站名称：</h3>
+                <input type="text" class="inputText width_250" name="title" /> *
+            	<h3>网站URL：</h3>
+                <input type="text" class="inputText width_250" name="url" value="http://" /> *
+            	<h3>网站LOGO：</h3>
+                <input type="text" class="inputText width_250" name="logo" value="" /> 大小为88*31像素。
+            	<h3>站长名字：</h3>
+                <input type="text" class="inputText width_250" name="name" /> *
+            	<h3>验证码：</h3>
+                <input type="text" class="inputText width_50" name="code" /> <img style="border:1px solid #666; padding:6px; cursor:pointer" src="{$$MO_ROOT}?m=home&a=safecode" title="点击刷新验证码" onclick="this.src='{$$MO_ROOT}?m=home&a=safecode&r=' + Math.random()" />  <input type="submit" class="inputButton" value="提交申请" />
+            </form>
+            <script type="text/javascript">
+			function CheckLinksPost(frm){
+				if(frm['title'].value==""){MessageBox.showError('请填写网站名称！');return false;}
+				if(frm['url'].value.length<=10 || frm['url'].value.toLowerCase().substr(0,7)!="http://" ){MessageBox.showError('请填写正确的网站URL！');return false;}
+				if(frm['name'].value==""){MessageBox.showError('请填写站长名字！');return false;}
+				F.ajax({
+					form:frm,
+					succeed:function(msg){
+						if(msg.indexOf("成功提交啦")>=0){
+							MessageBox.showInformation(msg);
+							window.setTimeout(function(){window.location.reload();},1000);
+						}else{
+							MessageBox.showError(msg);
+							F("#code").attr("src","{$$MO_ROOT}?m=home&a=safecode&r=" + Math.random());
+						}
+					},
+					error:function(){
+						MessageBox.showError("哎呀，服务器错误啦！");
+						F("#code").attr("src","{$$MO_ROOT}?m=home&a=safecode&r=" + Math.random());
+					}
+				});
+				return false;
+			}
+			</script>
+            </ul>
+        </div>
+    </div>
+    </else>
+    <div class="mo-box-left mo-linksimage">
+        <div class="mo-box-left-content">
+            <h2>管理员关闭了友情链接申请。</h2>
+        </div>
+    </div>
+    </eq>
+</div>
+<include file="Right" />
+<include file="Foot" />

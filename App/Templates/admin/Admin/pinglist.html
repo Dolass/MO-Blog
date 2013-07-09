@@ -1,0 +1,44 @@
+﻿<include file="nav" />
+<div class="nav">首页 &gt; <a href="{$$MO_ROOT}?m=admin&a=pings">Ping管理</a></div>
+<div class="right_main_b">
+
+<table width="100%" cellpadding="3" cellspacing="0" border="1" bordercolor="#a0b2d2">
+<tr>
+<th class="head" width="40">ID</th>
+<th class="head">名称</th>
+<th class="head">URL</th>
+<th class="head">可用</th>
+<th class="head">操作</th>
+</tr>
+<loop name="Pings">
+<tr>
+<td align="center">{$Pings.id}</td>
+<td>{$Pings.name}</td>
+<td>{$Pings.url}</td>
+<td>{$Pings.enabled}</td>
+<td align="center"><a href="{$$MO_ROOT}?m=admin&a=pings&id={$Pings.id}">编辑</a> |&nbsp;
+<a href="{$$MO_ROOT}?m=admin&a=deletepings&id={$Pings.id}" onclick="return window.confirm('确定要删除本记录吗？');">删除</a></td>
+</loop>
+</table>
+<page for="Pings" />
+<div class="right_main">
+<form action="{$$MO_ROOT}?m=admin&a=savepings" method="post">
+<input type="hidden" name="id" value="{$Ping.id}" />
+名称:<input type="text" class="inputText" name="name" value="{$Ping.name}" /> &nbsp;
+URL:<input type="text" class="inputText width_250" name="url" value="{$Ping.url}" /> &nbsp;
+启用:<select name="enabled">
+<option value="yes"<eq name="Ping.enabled" value="yes"> selected="selected"</eq>>是</option>
+<option value="no"<eq name="Ping.enabled" value="no"> selected="selected"</eq>>否</option>
+</select> &nbsp;
+<input type="submit" class="inputButton" value="<gt name="id" value="0" type="number">修改</else>添加</gt>" />
+</form>
+
+<form action="{$$MO_ROOT}?m=admin&a=savesystem&refer=yes" method="post" style="margin-top:10px">
+<input type="hidden" name="id" value="{$ID}" />开启Ping：
+<input type="radio" name="blog_ping_opened" value="yes"<eq name="blog_ping_opened" value="yes"> checked="checked"</eq> />是
+<input type="radio" name="blog_ping_opened" value="no"<neq name="blog_ping_opened" value="yes"> checked="checked"</neq> />否&nbsp; 
+<input type="submit" class="inputButton" value="保存" />
+</form>
+</div>
+</div>
+<include file="foot" />

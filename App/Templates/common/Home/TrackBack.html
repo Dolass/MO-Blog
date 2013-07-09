@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<rss version="0.91">
+	<channel>
+		<title><![CDATA[{$Art.Title}]]></title>
+		<link>{$System.blog_hostname}{$$MO_ROOT}<rewrite>?m=home&amp;a=show&amp;id={$Art.id}</rewrite></link>
+		<description><![CDATA[{$Art.Content:Mo.Common.ResetImageUri}]]></description>
+		<language>zh-CN</language>
+		<loop name="items">
+		<item>
+			<title><![CDATA[{$items.title}]]></title>
+			<link><![CDATA[{$items.url}]]></link>
+			<description><![CDATA[{$items.excerpt}]]></description>
+			<pubDate>{$items.AddDate:F.formatdate="yyyy-MM-dd HH:mm:ss"}</pubDate>
+		</item>
+		</loop>
+	</channel>
+</rss>

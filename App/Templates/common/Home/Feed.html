@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+<channel>
+    <title>{$System.title}</title>
+    <atom:link href="{$System.blog_hostname}{$$MO_ROOT}<rewrite>?m=home&amp;a=rss&amp;type=feed</rewrite>" rel="self" type="application/rss+xml" /> 
+    <link>{$System.blog_hostname}{$$MO_ROOT}</link>
+    <description>{$System.blog_description}</description>
+    <generator>{$System.blog_hostname}{$$MO_ROOT}</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>{$a:F.formatdate="yyyy-MM-dd HH:mm:ss"}</lastBuildDate>
+    <sy:updatePeriod>daily</sy:updatePeriod> 
+    <sy:updateFrequency>1</sy:updateFrequency> 
+   <loop name="list">
+   <item>
+      <title>{$list.Title}</title>
+      <dc:creator>{$list.Actor}</dc:creator>
+      <link>{$System.blog_hostname}{$$MO_ROOT}<rewrite>?m=home&amp;a=show&amp;id={$list.id}</rewrite></link>
+      <pubDate>{$list.AddDate:F.formatdate="yyyy-MM-dd HH:mm:ss"}</pubDate>
+      <guid>{$list.id:Mo.Base64.encode}</guid>
+      <description><![CDATA[{$list.Content:Mo.Common.ResetImageUri}]]></description>
+      <category>{$list.ClassName}</category>
+   </item>
+</loop>
+</channel>
+</rss>

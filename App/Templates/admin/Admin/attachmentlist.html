@@ -1,0 +1,102 @@
+﻿<include file="nav" />
+<div class="nav">首页 &gt; <a href="{$$MO_ROOT}?m=admin&a=attachmentlist">附件管理</a></div>
+<div class="right_main_b">
+<script type="text/javascript" src="{$$MO_ROOT}Scripts/swfupload/swfupload.js"></script>
+<script type="text/javascript" src="{$$MO_ROOT}Scripts/swfupload/swfupload.usage.js"></script>
+<script type="text/javascript" src="{$$MO_ROOT}Scripts/swfupload/swfupload.extend.js"></script>
+<script type="text/javascript">
+var swfu=null;
+window.onload=function(setting){
+	return function(){
+		swfu=SWFUpload.New(setting);
+	}
+}({
+	flash_url:"{$$MO_ROOT}Scripts/swfupload/swfupload.swf",
+	upload_url: "{$$MO_ROOT}?m=admin&a=upload&auto=false",
+	button_append : "divAddFiles",
+	button_width: 60,
+	button_height: 24,
+	button_text: "<span class=\"but\">选择文件</span>",
+	button_text_style:".but {color:#ff0000;}",
+	button_text_left_padding: 3,
+	button_text_top_padding: 6,
+	filter:{
+		post_name : "filedata",
+		types : "*.bmp;*.rar;*.jpg;*.gif;*.png;*.zip;*.doc;*.pdf",
+		types_description : "支持上传的文件类型",
+		size_limit : "10 mb",
+		upload_limit : 5
+	},
+	handlers:HANDLERS
+});
+function Uploaded(){
+	if(this.error==0){
+	Util("vpath").value="{$$MO_ROOT}__file__/"+this.name;
+	Util("vname").value=this.src;
+	}else{alert(this.message)}
+}
+</script>
+<form action="{$$MO_ROOT}" method="get">
+<input type="hidden" name="m" value="admin" /><input type="hidden" name="a" value="taglist" />
+标题：<input type="text" class="inputText" name="keyword" value="{$mo.get.keyword}" /> <input type="submit" class="inputButton" value="搜索" />
+</form>
+<table width="100%" cellpadding="3" cellspacing="0" border="1" bordercolor="#a0b2d2">
+<tr>
+<th class="head" width="40" align="center"><input type="checkbox" value="0" onclick="F('input.loglist').check(this.checked);" /></th>
+<th class="head" width="40">ID</th>
+<th class="head">名称</th>
+<th class="head">路径</th>
+<th class="head" width="120">上传日期</th>
+<th class="head" width="120">更新日期</th>
+<th class="head" width="60">下载次数</th>
+<th class="head" width="80">操作</th>
+</tr>
+<loop name="Attachment">
+<tr>
+<td align="center"><input class="loglist" type="checkbox" value="{$Attachment.id}" /></td>
+<td align="center">{$Attachment.id}</td>
+<td>{$Attachment.name}</td>
+<td>{$Attachment.path}</td>
+<td>{$Attachment.upload_date}</td>
+<td>{$Attachment.update_date}</td>
+<td align="center">{$Attachment.counts}</td>
+<td align="center"><a href="{$$MO_ROOT}?m=admin&a=attachmentlist&id={$Attachment.id}&page={$mo.get.page}">编辑</a> |&nbsp;
+<a href="{$$MO_ROOT}?m=admin&a=deleteattachment&id={$Attachment.id}" onclick="return window.confirm('确定要删除本记录吗？');">删除</a></td>
+</tr>
+</loop>
+<tr><td colspan="8">
+<input type="checkbox" value="0" onclick="F('input.loglist').check(this.checked);" /> <a href="javascript:void(0)" onclick="DeleteAll();">删除所选</a>
+</td></tr>
+</table>
+<page for="Attachment" />
+<div class="right_main">
+<form action="{$$MO_ROOT}?m=admin&a=saveattachment&page={$mo.get.page}" method="post">
+<input type="hidden" name="id" value="{$id}" />
+<input type="hidden" name="update_date" value="{$id:F.formatdate="yyyy-MM-dd HH:mm:ss"}" />
+<input type="hidden" name="oldpath" value="{$path}" />
+<table width="100%" cellpadding="4" cellspacing="0" border="0" style="border-collapse:collapse">
+<tr><td height="28" align="right" width="30">名称:</td><td><input id="vname" type="text" class="inputText width_250" name="name" value="{$name}" /></td></tr>
+<tr><td height="28" align="right">路径:</td><td><input id="vpath" type="text" class="inputText width_250" name="path" value="{$path}" /> <span id="divAddFiles"></span>
+
+<span id="Upload_Processer"></span></td></tr>
+<tr><td height="28" align="right">&nbsp; </td><td><input type="submit" class="inputButton" value="<gt name="id" value="0" type="number">修改</else>添加</gt>" /></td></tr>
+</form>
+</div>
+</div>
+<div id="dialog" title="" style="display:none"></div>
+<script type="text/javascript">
+function DeleteAll(){
+	var val=[];
+	F('input.loglist').each(function(){
+		if(this.checked)val.push(this.value);					 
+	});
+	if(val.length<=0){
+		F("#dialog").attr("title","删除附件").html("请先选择要删除的项目！").dialog({height:200,buttons:{"确定":function(){}}});return;
+	}else{
+		F("#dialog").attr("title","删除附件").html("确定要删除选中的操作记录吗？").dialog({height:200,buttons:{"删除所选":function(){
+			window.location="{$$MO_ROOT}?m=admin&a=deleteattachment&id=" + val.join(",") +"&ref=" + encodeURIComponent(window.location.href);																	   
+		},"取消":function(){}}});return;
+	}
+}
+</script>
+<include file="foot" />

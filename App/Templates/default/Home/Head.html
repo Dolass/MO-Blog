@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-cn" lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="{$self_keywords}{$System.blog_keyword}" />
+    <meta name="description" content="{$self_description}{$System.blog_description}" />
+    <meta name="google-site-verification" content="fvR3nari9hBgMrQZrv2S7Q24UfQnJU_pPtxs31TFMVE" />
+    <meta name="baidu-site-verification" content="9bpC0gvchh5GKWkv" />
+    <title>{$self_title}{$System.title}</title>
+    <link rel="alternate" type="application/rss+xml" title="订阅 {$System.blog_title} 所有文章" href="{$$MO_ROOT}<rewrite>?m=home&a=rss</rewrite>" />
+	<link rel="alternate" type="application/atom+xml" href="{$$MO_ROOT}<rewrite>?m=home&a=rss&type=atom</rewrite>" title="订阅 {$System.blog_title} 所有文章(ATOM)" />
+	<script type="text/javascript" src="{$$MO_ROOT}Scripts/s.js"></script>
+	<script type="text/javascript" src="{$$MO_ROOT}Scripts/f.js"></script>
+	<script type="text/javascript" src="{$$MO_ROOT}Scripts/f.e.js"></script>
+	<script type="text/javascript" src="{$$MO_ROOT}Scripts/f.ajax.js"></script>
+    <script type="text/javascript">
+	var MessageType={Error:1,Notice:2,Information:3};
+	var MessageBox={timeout:1500,show:function(message,mt){var classname="information";if(mt==MessageType.Error)classname="error";if(mt==MessageType.Notice)classname="notice";F("#mo-tips").css({"display":"block"});F("#mo-tips-content").html(message).Class(classname);if(MessageBox.timeout>0)window.setTimeout(function(){F("#mo-tips").css({"display":"none"});},MessageBox.timeout);},showError:function(message){MessageBox.show(message,MessageType.Error);},showNotice:function(message){MessageBox.show(message,MessageType.Notice);},showInformation:function(message){MessageBox.show(message,MessageType.Information);}};
+	</script>
+    <link href="{$$MO_APP}Templates/{$C.MO_TEMPLATE_NAME}/Home/layout.css" rel="stylesheet" />
+</head>
+<body>
+	<div id="mo-top">
+    		<div id="mo-top-main">
+        	<h2><a href="{$$MO_ROOT}">{$System.blog_title}</a></h2>
+            <h3>{$System.blog_sub_title}</h3>
+            </div>
+    </div>
+	<div id="mo-body" class="clearfix">

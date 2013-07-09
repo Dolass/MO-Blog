@@ -1,0 +1,63 @@
+﻿<include file="Head" />
+<div id="mo-body-left">
+<div id="mo-art-list">
+<include file="IndexArticle" />
+</div>
+<div class="pagestr_index"><page for="diary" url="{$$MO_ROOT}<rewrite>?m=home&a=cats&cat={$#mo.get.cat}&page={#page}</rewrite>" /></div>
+<div id="mo-more" class="mo-box-left mo-more" rel="m={$mo.get.m}&a={$mo.get.a}m&cat={$mo.get.cat}&page={$mo.get.page}">
+<div class="mo-box-left-content"><h2 id="mo-more-content">更多文章。。。</h2></div>
+</div>
+<script type="text/javascript">
+F(".mo-box-left-diary img").lazyLoad({replaceHolder:"{$$MO_ROOT}Images/blank.gif",offset:0});
+var parms={"a":"{$mo.get.a}","m":"{$mo.get.m}","cat":"{$mo.get.cat}","page":"{$mo.get.page}","ajax":"true"};
+if(parms.page=="")parms.page=1;
+var loaded=true;
+var atend=false;
+if(parms.a=="cats"){
+	F(window).scroll(LoadMore);
+	LoadMore();
+}else{
+	F("#mo-more").css("display","none");
+}
+F("pre.prettyprint").each(function(i){
+	var pre = this;  
+	pre.id="code_" + i;
+	var cls = pre.className||"";
+	if(cls.indexOf("lang-")>=0){
+		var lng = cls.replace(/^(.+?)lang\-(.+?)( (.+?))?$/,"$2");
+		var h3 = document.createElement("h3");
+		h3.className="lang_type";
+		h3.innerHTML=lng+" 代码[<a href=\"javascript:void(0)\" onclick=\"F('#" + pre.id + "').copy();\">复制</a>]：";
+		pre.parentNode.insertBefore(h3,pre);
+	}
+});
+function LoadMore(){
+	if(!loaded || atend)return;
+	if(F("#mo-more").isInView()){
+		parms.page++;
+		loaded=false;
+		F("#mo-more-content").html("正在努力的为您加载文章。。。");
+		F.ajax({
+			url:"{$$MO_ROOT}",
+			data:parms,
+			succeed:function(msg){
+				/*alert(msg);*/
+				if(msg.indexOf("没有任何文章")>0){
+					F("#mo-more-content").html("哎呀，没有文章可看了。");
+					atend=true;
+				}else{
+					F("#mo-art-list").append(msg);
+				}
+				loaded = true;
+			},
+			error:function(){
+				loaded = true;parms.page--;
+			},
+			ontimeout:function(){loaded = true;parms.page--;}
+		});
+	}				  
+}
+</script>
+</div>
+<include file="Right" />
+<include file="Foot" />

@@ -1,0 +1,38 @@
+﻿<include file="nav" />
+<div class="nav">首页 &gt; <eq name="forarticle" value="1"><a href="{$$MO_ROOT}?m=admin&a=comments&t=1">评论管理</a></else><a href="{$$MO_ROOT}?m=admin&a=comments&t=0">访客留言</a></eq></div>
+<div class="right_main">
+<form action="{$$MO_ROOT}?m=admin&a=savereply&t={$forarticle}" method="post">
+<input type="hidden" name="id" value="{$id}" />
+<input type="hidden" name="email" value="{$email}" />
+<input type="hidden" name="name" value="{$name}" /> 
+<input type="hidden" name="isreplay" value="1" />
+<input type="hidden" name="redate" value="{$id:F.formatdate="yyyy-MM-dd HH:mm:ss"}" />
+<table width="100%" cellpadding="4" cellspacing="0" border="0" style="border-collapse:collapse">
+    <tr><td width="80" height="28" align="right">留言内容：</td><td><textarea class="inputTextArea height_100 width_600">{$content}</textarea></td></tr>
+    <tr><td width="80" height="28" align="right">回复内容：</td><td><textarea class="inputTextArea height_100 width_600" name="rely">{$rely}</textarea></td></tr>
+    <tr><td height="28" align="right">回复日期：</td><td>{$redate:F.formatdate="yyyy-MM-dd HH:mm:ss"}</td></tr>
+    <tr><td height="28" align="right">&nbsp;</td><td><input type="submit" value="回复" name="submit" class="inputButton" />&nbsp;<input name="submit" type="submit" value="修改回复" class="inputButton" /></td></tr>
+</table>
+</form>
+<js href="{$$MO_ROOT}scripts/editor/kindeditor.js" />
+<js href="{$$MO_ROOT}scripts/editor/plugins/pagebreak/pagebreak.js" />
+<js href="{$$MO_ROOT}scripts/editor/plugins/code/code.js" />
+<js href="{$$MO_ROOT}scripts/editor/lang/zh_CN.js" />
+<script type="text/javascript">
+var editor;
+KindEditor.ready(function(K) {
+	editor = K.create('textarea[name="rely"]', {
+		resizeType : 0,
+		height:260,
+		width:700,
+		allowPreviewEmoticons : false,
+		allowImageUpload : false,
+		items : [
+			'source','|','fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+			'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
+			'insertunorderedlist', '|', 'emoticons', 'image', 'anchor', 'link', 'unlink', 'insertfile','|','pagebreak','code','|','lineheight','plainpaste','table']
+	});
+});
+</script>
+</div>
+<include file="foot" />

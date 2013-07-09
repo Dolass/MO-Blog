@@ -1,0 +1,12 @@
+﻿<include file="nav" />
+<div class="nav">首页 &gt; <a href="{$$MO_ROOT}?m=admin&a=safe">安全管理</a> &gt; 修改账户</div>
+<div class="right_main">
+<form action="{$$MO_ROOT}?m=admin&a=safesave" method="post">
+<h3>管理员:</h3><input type="text" name="username" value="{$mo.session.UserName}" class="inputText width_200" /> *管理员用户名可以修改，只允许出现数字、字母以及下划线<br />
+<h3>原密码:</h3><input type="text" name="oldpwd" value="" class="inputText width_200" /><br />
+<h3>新密码:</h3><input type="text" name="newpwd" value="" class="inputText width_200" /><br />
+<h3>再次输入新密码:</h3><input type="text" name="renewpwd" value="" class="inputText width_200" /><br /><br />
+<input type="submit" class="inputButton" value="保存" />
+</form>
+</div>
+<include file="foot" />

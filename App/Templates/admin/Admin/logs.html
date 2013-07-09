@@ -1,0 +1,55 @@
+﻿<include file="nav" />
+<div class="nav">首页 &gt; <a href="{$$MO_ROOT}?m=admin&a=logs">操作日志</a></div>
+<div class="right_main_b">
+<table width="100%" cellpadding="3" cellspacing="0" border="1" bordercolor="#a0b2d2">
+<tr>
+<th class="head" width="40" align="center"><input type="checkbox" value="0" onclick="F('input.loglist').check(this.checked);" /></th>
+<th class="head" width="40">ID</th>
+<th class="head">用户名</th>
+<th class="head">模块</th>
+<th class="head">操作</th>
+<th class="head">描述</th>
+<th class="head">日期</th>
+<th class="head">IP</th>
+<th class="head">状态</th>
+</tr>
+<loop name="Logs">
+<tr>
+<td align="center"><input class="loglist" type="checkbox" value="{$Logs.id}" /></td>
+<td>{$Logs.id}</td>
+<td>{$Logs.username}</td>
+<td>{$Logs.model}</td>
+<td>{$Logs.action}</td>
+<td>{$Logs.description}</td>
+<td>{$Logs.logdate:F.formatdate="yyyy-MM-dd HH:mm:ss"}</td>
+<td>{$Logs.ip}</td>
+<td>{$Logs.status}</td>
+</tr>
+</loop>
+<tr><td colspan="9">
+<input type="checkbox" value="0" onclick="F('input.loglist').check(this.checked);" /> <a href="javascript:void(0)" onclick="DeleteAll();">删除所选</a>
+</td></tr>
+</table>
+<page for="Logs"/>
+</div>
+<div id="dialog" title="" style="display:none"></div>
+<script type="text/javascript">
+function DeleteAll(){
+	var val=[];
+	F('input.loglist').each(function(){
+		if(this.checked)val.push(this.value);					 
+	});
+	if(val.length<=0){
+		F("#dialog").attr("title","删除日志").html("请先选择要删除的项目！").dialog({height:200,buttons:{"确定":function(){}}});return;
+	}else{
+		F("#dialog").attr("title","删除日志").html("确定要删除选中的操作记录吗？").dialog({height:200,buttons:{"删除所选":function(){
+			window.location="{$$MO_ROOT}?m=admin&a=deletelogs&id=" + val.join(",") +"&ref=" + encodeURIComponent(window.location.href);																	   
+		},"删除所有":function(){
+			if(window.confirm('确定要删除所有操作记录吗？')){
+				window.location="{$$MO_ROOT}?m=admin&a=deletelogs&id=-1&ref=" + encodeURIComponent("{$$MO_ROOT}?m=admin&a=logs");		
+			}
+		},"取消":function(){}}});return;
+	}
+}
+</script>
+<include file="foot" />

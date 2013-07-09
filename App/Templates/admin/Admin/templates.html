@@ -1,0 +1,41 @@
+﻿<include file="nav" />
+<div class="nav">首页 &gt; <a href="{$$MO_ROOT}?m=admin&a=templates">模板管理</a> <span class="green">当前程序版本：{$Mo.C.Blog.Version}</span> <span class="green">内核版本：{$CoreVersion}</span></div>
+<div class="right_main_b">
+<table width="100%" cellpadding="3" cellspacing="0" border="1" bordercolor="#a0b2d2">
+<tr>
+<th class="head">名称</th>
+<th class="head">模板版本</th>
+<th class="head">适用程序版本</th>
+<th class="head">制作时间</th>
+<th class="head">最后修改时间</th>
+<th class="head">作者</th>
+<th class="head">简介</th>
+<th class="head">操作</th>
+</tr>
+	<nempty name="current">
+	<tr>
+    <td>{$current.name}</td>
+    <td>{$current.version}</td>
+    <td>{$current.for}</td>
+    <td>{$current.createdatetime}</td>
+    <td>{$current.moddatetime}</td>
+    <td>{$current.author} - {$current.email}</td>
+    <td>{$current.description}</td>
+    <td>正在使用</td>
+    </tr>
+    </nempty>
+    <loop name="List">
+	<tr>
+    <td>{$List.name}</td>
+    <td>{$List.version}</td>
+    <td>{$List.for}</td>
+    <td>{$List.createdatetime}</td>
+    <td>{$List.moddatetime}</td>
+    <td>{$List.author} - {$List.email}</td>
+    <td>{$List.description}</td>
+    <td><a href="{$$MO_ROOT}?view=yes&name={$List.tname}" target="_blank">预览</a> <a style="color:red" href="{$$MO_ROOT}?m=admin&a=usetemplate&t={$List.tname}" onclick="return window.confirm('确定要应用本模板吗？');">应用</a></td>
+    </tr>  	
+    </loop>
+</table>
+</div>
+<include file="foot" />

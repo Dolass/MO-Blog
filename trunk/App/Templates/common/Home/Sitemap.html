@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+<loc>{$System.blog_hostname}{$$MO_ROOT}<rewrite>?m=home&amp;a=index</rewrite></loc>
+<lastmod>{$s:FormatDate="YYYY-MM-DD"}</lastmod>
+<changefreq>always</changefreq>
+<priority>0.8</priority>
+</url>
+<url>
+<loc>{$System.blog_hostname}{$$MO_ROOT}<rewrite>?m=home&amp;a=links</rewrite></loc>
+<lastmod>{$s:FormatDate="YYYY-MM-DD"}</lastmod>
+<changefreq>always</changefreq>
+<priority>0.8</priority>
+</url>
+<url>
+<loc>{$System.blog_hostname}{$$MO_ROOT}<rewrite>?m=home&amp;a=guest</rewrite></loc>
+<lastmod>{$s:FormatDate="YYYY-MM-DD"}</lastmod>
+<changefreq>always</changefreq>
+<priority>0.8</priority>
+</url>
+<loop name="list">
+<url>
+<loc>{$System.blog_hostname}{$$MO_ROOT}<rewrite>?m=home&amp;a=show&amp;id={$list.id}</rewrite></loc>
+<lastmod>{$list.AddDate:FormatDate="YYYY-MM-DD"}</lastmod>
+<changefreq>always</changefreq>
+<priority>0.8</priority>
+</url>
+</loop>
+</urlset>

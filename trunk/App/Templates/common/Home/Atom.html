@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title type="html">{$System.title}</title>
+    <subtitle type="html">{$System.blog_description}</subtitle>
+    <id>{$System.blog_hostname}{$$MO_ROOT}</id>
+    <link rel="alternate" type="text/html" href="{$System.blog_hostname}{$$MO_ROOT}" />
+    <link rel="self" type="application/atom+xml" href="{$System.blog_hostname}{$$MO_ROOT}<rewrite>?m=home&amp;a=rss&amp;type=atom</rewrite>" />
+    <generator uri="{$System.blog_hostname}{$$MO_ROOT}" version="1.0">{$System.Master_Name}</generator>
+    <updated>{$a:F.formatdate="yyyy-MM-dd HH:mm:ss"}</updated>
+    <loop name="list">
+    <entry>
+        <title type="html">{$list.Title}</title>
+        <author><name>{$list.Actor}</name><uri>{$System.blog_hostname}{$$MO_ROOT}</uri><email>{$System.blog_email}</email></author>
+        <link rel="alternate" type="text/html" href="{$System.blog_hostname}{$$MO_ROOT}<rewrite>?m=home&amp;a=show&amp;id={$list.id}</rewrite>" />
+        <updated>{$list.AddDate:F.formatdate="yyyy-MM-dd HH:mm:ss"}</updated>
+		<published>{$list.AddDate:F.formatdate="yyyy-MM-dd HH:mm:ss"}</published>
+        <id>{$System.blog_hostname}{$$MO_ROOT}<rewrite>?m=home&amp;a=show&amp;id={$list.id}</rewrite></id>
+        <summary type="html"><![CDATA[{$list.Content:Mo.Common.ResetImageUri}]]></summary>
+        <category term="" label="JavaScript/DOM" scheme="{$System.blog_hostname}{$$MO_ROOT}<rewrite>?m=home&amp;a=cats&amp;cat={$list.ClassID}</rewrite>" />
+    </entry>
+    </loop>
+</feed>

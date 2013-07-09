@@ -1,0 +1,144 @@
+﻿<include file="Head" />
+<div id="mo-body-left">
+	<div class="mo-box-left mo-photos">
+        <div class="mo-box-left-content hslice">
+            <h2>{$Album.name} <span style="font-size:12px; font-weight:normal"><a href="javascript:share();">人人分享</a></span></h2>
+            <h3>{$Album.description}</h3>
+            <nempty name="Album.address"><h3>{$Album.address}</h3></nempty>
+            <div class="mo-photo-list clearfix"></div>
+        </div>
+	</div>
+</div>
+<div id="dialog" title="浏览照片" style="display:none"></div>
+<style type="text/css">
+div.mo-photo-list > div{ position:absolute;  width:200px; height:auto; text-align:center;}
+div.mo-photo-list > div img{ cursor:pointer;padding:4px; border:1px #ddd solid;r}
+div.mo-photo-list > div.first{ width: 200px; left:0; top:0; position:static; margin-top:20px; margin-left:20px; height:150px; line-height:150px}
+</style>
+<script type="text/javascript">
+var POS=[0,0,0];
+var currentImage=null;
+var list=null;
+var current=0;
+var position = F("div.mo-photo-list").position();
+LoadAlbum();
+F(window).resize(function(){
+	var newpos = F("div.mo-photo-list").position();
+	var offset=newpos.left-position.left;
+	F("div.mo-photo-list img").parent().each(function(){
+		var oleft = parseInt(this.style.left);
+		oleft +=offset;
+		this.style.left=oleft+"px";
+	});	
+	position.left = newpos.left;
+	position.top = newpos.top;				  
+});
+function findMax(ary){
+	if(ary.length<=0)return-1;
+	var maxn=ary[0];
+	F(ary).each(function(i){
+		if(i==0)return;
+		if(this>maxn)maxn=this;
+	});
+	return maxn;
+}
+function findMin(ary){
+	if(ary.length<=0)return-1;
+	var minn=0;
+	F(ary).each(function(i){
+		if(i==0)return;
+		if(this<ary[minn])minn=i;
+	});
+	return minn;
+}
+function LoadAlbum(){
+	F("div.mo-photo-list").append("<div class=\"first\">正在加载相册...</div>");
+	F.ajax({
+		url:"{$$MO_ROOT}?m=home&a=gallerydata&id={$Album.id}",
+		dataType:"json",
+		error:function(){
+			F("div.mo-photo-list div").remove();
+			F("div.mo-photo-list").append("<div class=\"first\">相册加载失败！</div>");
+		},
+		succeed:function(msg){
+			F("div.mo-photo-list div").remove();
+			if(!msg){
+				F("div.mo-photo-list").append("<div class=\"first\">相册加载失败！</div>");
+			}else{
+				list = msg;
+				if(list.length<=0){
+					F("div.mo-photo-list").append("<div class=\"first\">相册没有任何照片！</div>");
+					return;
+				}
+				for(var i=0;i<list.length;i++){
+					var wh = getWH(list[i].t_width,list[i].t_height,200);
+					var minn = findMin(POS);
+					F("div.mo-photo-list").append("<div style=\"left:" + ((minn * (208+10))+position.left+20) + "px;top:" + (POS[minn]+position.top+20) + "px\"><img id=\"i" + i + "\" rel=\"" + i + "\" src=\"{$mo.c.Blog.AlbumPath}" + list[i].t_path + "\" width=\"" + wh.w + "\" height=\"" + wh.h + "\" /></div>");	
+					POS[minn]+=wh.h+18;
+				}
+				F("div.mo-photo-list").css({"height":findMax(POS)+"px"});
+				F("div.mo-photo-list img").lazyLoad({replaceHolder:"{$$MO_ROOT}Images/blank.gif",offset:0});
+				F("div.mo-photo-list img").click(function(){
+					var Item = list[parseInt(this.id.substr(1))];
+					currentImage = parseInt(this.id.substr(1));
+					ShowPicture('{$mo.c.Blog.AlbumPath}'+Item.path,Item.width,Item.height,Item.name,Item.description);	
+				});
+			}
+		}
+	});
+}
+function ShowPicture(url,w,h,name,desc){
+	var wh = getWH(w,h,800,500);
+	F("#dialog").dialog({
+		title:"浏览照片-" + name +",正在加载...",
+		content:"<div style=\"text-align:center; padding:5px 0; overflow:hidden\"><img style=\"cursor:pointer\" onload=\"F('#dialog').dialog('title','浏览照片-" + name + "');\" src=\"" + url + "\" width=\"" + wh.w + "\" height=\"" + wh.h + "\" alt=\"" + name + "\" title=\"" + name + "\" /></div>",
+		buttons:{
+			"查看原图":function(){
+				window.open(url,"_blank");
+				return false;
+			},"关闭":function(){}
+		},maxHeight:620,width:820,height:580
+	});
+	F("div.mo-dialog-content img:first").click(function(e){
+		UpdatePicture(e);
+	});
+}
+function UpdatePicture(e){
+	if(currentImage==null)return;
+	e = F.fix(e||event);
+	var ps = F.rectangle();
+	var Item = list[currentImage];
+	var isadd = true;
+	if(e.pageX<ps.width/2)isadd=false
+	currentImage =  currentImage +(isadd?1:-1);
+	if(currentImage>=list.length)currentImage=list.length-1;
+	if(currentImage<0)currentImage=0;
+	var Item = list[currentImage];
+	ShowPicture('{$mo.c.Blog.AlbumPath}'+Item.path,Item.width,Item.height,Item.name,Item.description);
+}
+function getWH(w,h,maxw,maxh){
+	if(w>maxw){
+		h = maxw * (h/w);
+		w = maxw;
+	}
+	if(maxh && !isNaN(maxh) && h>maxh){
+		w = maxh * (w/h);
+		h = maxh;
+	}
+	return {w:parseInt(w),h:parseInt(h)};
+}
+function share(){
+	var url=encodeURIComponent(window.location.href);
+	image=(F("div.mo-photo-list img:first").attr("src"));
+	if(image!="" && image.indexOf("http://")!=0)image = "{$System.blog_hostname}" + image;
+	var content=encodeURIComponent(F("div.hslice h3:first").text());
+	var title=encodeURIComponent("{$Album.name}");
+	var _u = 'http://widget.renren.com/dialog/share?title=' + title + '&pic=' + encodeURIComponent(image) + '&resourceUrl=' + (url) + '&description=' + (content);		
+	wopen(_u);
+}
+function wopen(url){
+	window.open( url,'', 'width=700, height=600,top=50, toolbar=no, menubar=no, scrollbars=yes, location=yes, resizable=yes, status=no' );
+}
+</script>
+<include file="Right" />
+<include file="Foot" />

@@ -1,0 +1,66 @@
+﻿<include file="nav" />
+<div class="nav">首页 &gt; <eq name="ty" value="1"><a href="{$$MO_ROOT}?m=admin&a=comments&t=1">评论管理</a></else><a href="{$$MO_ROOT}?m=admin&a=comments&t=0">访客留言</a></eq></div>
+<div class="right_main_b">
+<form action="{$$MO_ROOT}" method="get">
+<input type="hidden" name="t" value="{$ty}" />
+<input type="hidden" name="m" value="admin" /><input type="hidden" name="a" value="comments" />
+内容：<input type="text" class="inputText" name="keyword" value="{$mo.get.keyword}" /> <input type="submit" class="inputButton" value="搜索" />
+{$Mo.get.msg}
+</form>
+<table width="100%" cellpadding="3" cellspacing="0" border="1" bordercolor="#a0b2d2">
+<tr>
+<th class="head" width="40" align="center"><input type="checkbox" value="0" onclick="F('input.loglist').check(this.checked);" /></th>
+<th class="head" width="40">ID</th>
+<th class="head">名字</th>
+<th class="head">内容</th>
+<th class="head">日期</th>
+<th class="head">IP</th>
+<th class="head">邮箱</th>
+<th class="head">主页</th>
+<th class="head">类型</th>
+<th class="head">隐私</th>
+<th class="head">回复</th>
+<th class="head">已读</th>
+<th class="head">审核</th>
+<th class="head">操作</th>
+</tr>
+<loop name="Comments">
+<tr>
+<td align="center"><input class="loglist" type="checkbox" value="{$Comments.id}" /></td>
+<td align="center">{$Comments.id}</td>
+<td>{$Comments.name}</td>
+<td>{$Comments.content:Left=20}</td>
+<td>{$Comments.ly_date:F.formatdate="yyyy-MM-dd HH:mm:ss"}</td>
+<td align="center">{$Comments.ly_ip}</td>
+<td align="center">{$Comments.email}</td>
+<td align="center"><nempty name="Comments.homepage"><a href="{$Comments.homepage}" target="_blank">{$Comments.homepage}</a></nempty></td>
+<td align="center"><eq name="Comments.forarticle" value="0"><a href="{$$MO_ROOT}?m=home&a=guest&id={$Comments.id}" target="_blank">留言</a></else><a href="{$$MO_ROOT}?m=home&a=show&id={$Comments.pid}#c{$Comments.id}" target="_blank">评论</a></eq>
+</td>
+<td align="center"><eq name="Comments.secret" value="yes">是</else>否</eq></td>
+<td align="center"><empty name="Comments.rely">否</else>是</eq></td>
+<td align="center"><eq name="Comments.isreplay" value="0" type="number"><a href="/?m=admin&a=commentread&id={$Comments.id}&t={$ty}&page={$Mo.Get.page}" onclick="if(!window.confirm('确定要标记为已读吗？'))return false;">设为已读</a></else>已读</eq></td>
+<td align="center"><a href="{$$MO_ROOT}?m=admin&a=updatecomments&id={$Comments.id}&t={$ty}&page={$Mo.Get.page}"><eq name="Comments.checked" value="1">是</else>否</eq></a></td>
+<td align="center"><a href="{$$MO_ROOT}?m=admin&a=commentview&id={$Comments.id}">查看</a> |&nbsp;
+<a href="{$$MO_ROOT}?m=admin&a=deletecomments&id={$Comments.id}&t={$Comments.forarticle}&page={$Mo.Get.page}" onclick="return window.confirm('确定要删除本记录吗？');">删除</a></td>
+</loop>
+<tr><td colspan="14">
+<input type="checkbox" value="0" onclick="F('input.loglist').check(this.checked);" /> <a href="javascript:void(0)" onclick="DeleteAll();">删除所选</a>
+</td></tr>
+</table>
+<page for="Comments" />
+</div>
+<div id="dialog" title="" style="display:none"></div>
+<script type="text/javascript">
+function DeleteAll(){
+	var val=[];
+	F('input.loglist').each(function(){if(this.checked)val.push(this.value);});
+	if(val.length<=0){
+		F("#dialog").attr("title","删除评论/留言").html("请先选择要删除的项目！").dialog({height:200,buttons:{"确定":function(){}}});return;
+	}else{
+		F("#dialog").attr("title","删除评论/留言").html("确定要删除选中的操作记录吗？").dialog({height:200,buttons:{"删除所选":function(){
+			window.location="{$$MO_ROOT}?m=admin&a=deletecomments&t={$mo.get.t}&id=" + val.join(",") +"&ref=" + encodeURIComponent(window.location.href);																	   
+		},"取消":function(){}}});return;
+	}
+}
+</script>
+<include file="foot" />

@@ -1,0 +1,61 @@
+﻿<include file="nav" />
+<div class="nav">首页 &gt; <a href="{$$MO_ROOT}?m=admin&a=article">文章管理</a> &gt; 文章列表 | <a href="{$$MO_ROOT}?m=admin&a=articleedit">发表文章</a> | <a href="{$$MO_ROOT}?m=admin&a=updatecats">更新统计</a></div>
+<div class="right_main_b">
+<form action="{$$MO_ROOT}" method="get">
+<input type="hidden" name="m" value="admin" /><input type="hidden" name="a" value="article" />
+标题：<input type="text" class="inputText" name="keyword" value="{$mo.get.keyword}" /> <input type="submit" class="inputButton" value="搜索" /> {$Mo.Get.msg}
+</form>
+<table id="aaaaa" width="100%" cellpadding="3" cellspacing="0" border="1" bordercolor="#a0b2d2">
+<tr>
+<th class="head" width="40" align="center"><input type="checkbox" value="0" onclick="F('input.loglist').check(this.checked);" /></th>
+<th class="head" width="40">ID</th>
+<th class="head">标题</th>
+<th class="head" width="150">分类</th>
+<th class="head" width="60">浏览量</th>
+<th class="head" width="60">是否显示</th>
+<th class="head" width="60">评论</th>
+<th class="head" width="60">置顶</th>
+<th class="head" width="60">引用通告</th>
+<th class="head" width="60">被引用</th>
+<th class="head" width="120">操作</th>
+</tr>
+<loop name="articles">
+<tr>
+<td align="center"><input class="loglist" type="checkbox" value="{$articles.id}" /></td>
+<td align="center">{$articles.id}</td>
+<td>{$articles.Title}</td>
+<td align="center">{$articles.ClassName}</td>
+<td align="center">{$articles.views}</td>
+<td align="center"><eq name="articles.Is_Secret" value="1">否</else>是</eq></td>
+<td align="center"><eq name="articles.can_comment" value="1">允许</else>不允许</eq></td>
+<td align="center"><eq name="articles.Is_Top" value="1">是</else>否</eq></td>
+<td align="center"><empty name="articles.trackback">无</else><a href="{$articles.trackback}" target="_blank">引用</a></empty></td>
+<td align="center"><a href="{$$MO_ROOT}?m=admin&a=trackback&id={$articles.id}">{$articles.trackback_count}次</a></td>
+<td align="center"><a href="{$$MO_ROOT}?m=admin&a=articleedit&id={$articles.id}&page={$Mo.get.page}">编辑</a> |&nbsp;
+<a href="{$$MO_ROOT}?m=admin&a=deletearticle&id={$articles.id}&page={$Mo.get.page}" onclick="return window.confirm('确定要删除本记录吗？');">删除</a> |&nbsp;
+<a href="{$$MO_ROOT}?m=admin&a=ping&id={$articles.id}&page={$Mo.get.page}" onclick="return window.confirm('确定要进行Ping操作吗？');">Ping</a></td>
+</tr>
+</loop>
+<tr><td colspan="11">
+<input type="checkbox" value="0" onclick="F('input.loglist').check(this.checked);" /> <a href="javascript:void(0)" onclick="DeleteAll();">删除所选</a>
+</td></tr>
+</table>
+<page for="articles" />
+</div>
+<div id="dialog" title="" style="display:none"></div>
+<script type="text/javascript">
+function DeleteAll(){
+	var val=[];
+	F('input.loglist').each(function(){
+		if(this.checked)val.push(this.value);					 
+	});
+	if(val.length<=0){
+		F("#dialog").attr("title","删除日志").html("请先选择要删除的项目！").dialog({height:200,buttons:{"确定":function(){}}});return;
+	}else{
+		F("#dialog").attr("title","删除日志").html("确定要删除选中的操作记录吗？").dialog({height:200,buttons:{"删除所选":function(){
+			window.location="{$$MO_ROOT}?m=admin&a=deletearticle&id=" + val.join(",") +"&ref=" + encodeURIComponent(window.location.href);																	   
+		},"取消":function(){}}});return;
+	}
+}
+</script>
+<include file="foot" />

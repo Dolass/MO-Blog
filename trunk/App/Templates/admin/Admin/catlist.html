@@ -1,0 +1,24 @@
+﻿<include file="nav" />
+<div class="nav">首页 &gt; <a href="{$$MO_ROOT}?m=admin&a=catlist">类别管理</a> &gt; <a href="{$$MO_ROOT}?m=admin&a=catlist">根类别</a>
+<foreach name="pathlist" type="object">
+ &gt; <a href="{$$MO_ROOT}?m=admin&a=catlist&pid={$pathlist.ID}">{$pathlist.Class_Name}</a>
+</foreach>
+&nbsp;|&nbsp;<a href="{$$MO_ROOT}?m=admin&a=articleedit">发表文章</a>
+</div>
+<div class="right_main">
+<loop name="classes">
+<strong>{$classes.ID}</strong>：{$classes.Class_Name} [排序：{$classes.Class_Order}，标签：{$classes.Class_Tag}]
+<a href="{$$MO_ROOT}?m=admin&a=catlist&id={$classes.ID}&pid={$pid}">编辑</a> | 
+<a href="{$$MO_ROOT}?m=admin&a=catlist&pid={$classes.ID}">子项</a> | 
+<a href="{$$MO_ROOT}?m=admin&a=deletecat&id={$classes.ID}&pid={$pid}" onclick="return window.confirm('确定要删除本记录吗？');">删除</a><br />
+</loop>
+<form action="{$$MO_ROOT}?m=admin&a=savecat" method="post">
+<input type="hidden" name="Class_Type" value="{$pid}" />
+<input type="hidden" name="ID" value="{$id}" />
+名称:<input type="text" class="inputText" name="Class_Name" value="{$Class_Name}" /> 
+排序:<input type="text" class="inputText width_50" name="Class_Order" value="{$Class_Order}" /> 
+标签:<input type="text" class="inputText width_50" name="Class_Tag" value="{$Class_Tag}" /> 
+<input type="submit" class="inputButton" value="<gt name="ID" value="0" type="number">修改</else>添加</gt>" />
+</form>
+</div>
+<include file="foot" />

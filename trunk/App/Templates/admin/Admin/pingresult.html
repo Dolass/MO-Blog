@@ -1,0 +1,13 @@
+﻿<include file="nav" />
+<div class="nav">首页 &gt; <a href="{$$MO_ROOT}?m=admin&a=pings">Ping管理</a> | <a href="{$$MO_ROOT}?m=admin&a=article&page={$Mo.get.page}">返回</a></div>
+<div class="right_main">
+{$PingResult}
+<div>
+<loop name="Results">
+Ping请求：{$Results.url}<br />
+请求结果：<br />
+<textarea cols="100" class="inputTextArea" rows="4">{$Results.result}</textarea><br /><br />
+</loop>
+</div>
+</div>
+<include file="foot" />

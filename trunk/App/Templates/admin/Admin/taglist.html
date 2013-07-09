@@ -1,0 +1,58 @@
+﻿<include file="nav" />
+<div class="nav">首页 &gt; <a href="{$$MO_ROOT}?m=admin&a=taglist">标签管理</a> &gt; <a href="{$$MO_ROOT}?m=admin&a=updatetag">重新统计标签</a></div>
+<div class="right_main_b">
+<form action="{$$MO_ROOT}" method="get">
+<input type="hidden" name="m" value="admin" /><input type="hidden" name="a" value="taglist" />
+标题：<input type="text" class="inputText" name="keyword" value="{$mo.get.keyword}" /> <input type="submit" class="inputButton" value="搜索" />
+</form>
+<table width="100%" cellpadding="3" cellspacing="0" border="1" bordercolor="#a0b2d2">
+<tr>
+<th class="head" width="40" align="center"><input type="checkbox" value="0" onclick="F('input.loglist').check(this.checked);" /></th>
+<th class="head" width="40">ID</th>
+<th class="head">名称</th>
+<th class="head" width="60">标识</th>
+<th class="head" width="60">关联文章数</th>
+<th class="head" width="80">操作</th>
+</tr>
+<loop name="Tags">
+<tr>
+<td align="center"><input class="loglist" type="checkbox" value="{$Tags.id}" /></td>
+<td align="center">{$Tags.id}</td>
+<td>{$Tags.name}</td>
+<td>{$Tags.tag}</td>
+<td align="center">{$Tags.counts}</td>
+<td align="center"><a href="{$$MO_ROOT}?m=admin&a=taglist&id={$Tags.id}&page={$mo.get.page}">编辑</a> |&nbsp;
+<a href="{$$MO_ROOT}?m=admin&a=deletetag&id={$Tags.id}" onclick="return window.confirm('确定要删除本记录吗？');">删除</a></td>
+</tr>
+</loop>
+<tr><td colspan="6">
+<input type="checkbox" value="0" onclick="F('input.loglist').check(this.checked);" /> <a href="javascript:void(0)" onclick="DeleteAll();">删除所选</a>
+</td></tr>
+</table>
+<page for="Tags" />
+<div class="right_main">
+<form action="{$$MO_ROOT}?m=admin&a=savetag&page={$mo.get.page}" method="post">
+<input type="hidden" name="id" value="{$id}" />
+标签名称:<input type="text" class="inputText" name="name" value="{$name}" /> 
+标签标识:<input type="text" class="inputText" name="tag" value="{$tag}" /> 
+<input type="submit" class="inputButton" value="<gt name="id" value="0" type="number">修改</else>添加</gt>" />
+</form>
+</div>
+</div>
+<div id="dialog" title="" style="display:none"></div>
+<script type="text/javascript">
+function DeleteAll(){
+	var val=[];
+	F('input.loglist').each(function(){
+		if(this.checked)val.push(this.value);					 
+	});
+	if(val.length<=0){
+		F("#dialog").attr("title","删除标签").html("请先选择要删除的项目！").dialog({height:200,buttons:{"确定":function(){}}});return;
+	}else{
+		F("#dialog").attr("title","删除标签").html("确定要删除选中的操作记录吗？").dialog({height:200,buttons:{"删除所选":function(){
+			window.location="{$$MO_ROOT}?m=admin&a=deletetag&id=" + val.join(",") +"&ref=" + encodeURIComponent(window.location.href);																	   
+		},"取消":function(){}}});return;
+	}
+}
+</script>
+<include file="foot" />

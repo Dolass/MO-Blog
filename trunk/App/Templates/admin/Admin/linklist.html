@@ -1,0 +1,81 @@
+﻿<include file="nav" />
+<div class="nav">首页 &gt; <a href="{$$MO_ROOT}?m=admin&a=links">友情链接</a> | <a href="{$$MO_ROOT}?m=admin&a=linkedit" onclick="showdialog('{$$MO_ROOT}?m=ajax&a=link&for=link');return false;">新链接</a></div>
+<div class="right_main_b">
+<form action="{$$MO_ROOT}" method="get">
+<input type="hidden" name="m" value="admin" /><input type="hidden" name="a" value="links" />
+标题：<input type="text" class="inputText" name="keyword" value="{$mo.get.keyword}" /> <input type="submit" class="inputButton" value="搜索" />
+</form>
+<table width="100%" cellpadding="3" cellspacing="0" border="1" bordercolor="#a0b2d2">
+<tr>
+<th class="head" width="40" align="center"><input type="checkbox" value="0" onclick="F('input.loglist').check(this.checked);" /></th>
+<th class="head" width="40">ID</th>
+<th class="head">标题</th>
+<th class="head">主页</th>
+<th class="head">Logo</th>
+<th class="head">作者</th>
+<th class="head">审核状态</th>
+<th class="head">排序</th>
+<th class="head">是否图片</th>
+<th class="head">操作</th>
+</tr>
+<loop name="Links">
+<tr>
+<td align="center"><input class="loglist" type="checkbox" value="{$Links.id}" /></td>
+<td align="center">{$Links.id}</td>
+<td>{$Links.title}</td>
+<td><a href="{$Links.url}" target="_blank">{$Links.url}</a></td>
+<td><nempty name="Links.image_"><img src="{$Links.image_}" width="150" /></nempty></td>
+<td align="center">{$Links.author}</td>
+<td align="center"><switch name="Links.ischecked"><case value="1" />通过<case value="0" />未审核<case value="2" />不通过</switch></td>
+<td align="center">{$Links.link_order}</td>
+<td align="center"><eq name="Links.isimage" value="1">是</else>否</eq></td>
+<td align="center"><a href="{$$MO_ROOT}?m=admin&a=linkedit&id={$Links.id}" onclick="showdialog('{$$MO_ROOT}?m=ajax&a=link&for=link&id={$Links.id}');return false;">编辑</a> |&nbsp;
+<a href="{$$MO_ROOT}?m=admin&a=deletelinks&id={$Links.id}" onclick="return window.confirm('确定要删除本记录吗？');">删除</a></td>
+</loop>
+<tr><td colspan="10">
+<input type="checkbox" value="0" onclick="F('input.loglist').check(this.checked);" /> <a href="javascript:void(0)" onclick="DeleteAll();">删除所选</a>
+</td></tr>
+</table>
+<page for="Links" />
+</div>
+<div id="dialog" title="" style="display:none"></div>
+<script type="text/javascript">
+function DeleteAll(){
+	var val=[];
+	F('input.loglist').each(function(){
+		if(this.checked)val.push(this.value);					 
+	});
+	if(val.length<=0){
+		F("#dialog").attr("title","删除链接").html("请先选择要删除的项目！").dialog({height:200,buttons:{"确定":function(){}}});return;
+	}else{
+		F("#dialog").attr("title","删除链接").html("确定要删除选中的操作记录吗？").dialog({height:200,buttons:{"删除所选":function(){
+			window.location="{$$MO_ROOT}?m=admin&a=deletelinks&id=" + val.join(",") +"&ref=" + encodeURIComponent(window.location.href);																	   
+		},"取消":function(){}}});return;
+	}
+}
+
+function showdialog(url){
+	F("#dialog").attr("title","修改/添加友情链接").html("正在加载...").dialog({height:200,buttons:null});
+	F.ajax({
+		url:url,
+		succeed:function(msg){
+			F("#dialog").html(msg).dialog({height:500,maxHeight:500,
+				buttons:{
+					"保存信息":function(){
+						F.ajax({
+							form:document.forms['frmsubmit'],
+							succeed:function(msg){
+								var fn=function(){window.location.reload();};
+								if(msg.indexOf("已保存")<0)fn = function(){};
+								F("#dialog").html(msg).dialog({buttons:{"确定":fn},height:200});
+							}
+						});
+					},
+					"取消":function(){}	
+				}
+			});
+		}
+	});	
+}
+</script>
+<include file="foot" />

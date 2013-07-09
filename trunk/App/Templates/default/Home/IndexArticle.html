@@ -1,0 +1,9 @@
+﻿<loop name="diary" eof="&lt;div class="mo-box-eof"&gt;还没有任何文章可看哈！&lt;/div&gt;">
+    <div class="mo-box-left<eq name="diary.Is_Top" value="1"> mo-istop-1</eq>">
+        <div class="mo-box-left-content hslice">
+            <h2><a href="{$$MO_ROOT}<rewrite>?m=home&a=show&id={$diary.id}</rewrite>"><eq name="diary.Is_Top" value="1">【置顶】</eq>{$diary.Title}</a></h2>
+            <h3>{$diary.AddDate:FormatDate="01"} 分类：<a href="{$$MO_ROOT}<rewrite>?m=home&a=cats&cat={$diary.ClassID}</rewrite>">{$diary.ClassName}</a> 标签：{$diary.Tags:Mo.Common.ActTags=true}<gt name="diary.views" value="0"> 浏览：{$diary.views}次</gt></h3>
+            <eq name="diary.Is_Top" value="0"><div class="mo-box-left-diary">{$diary.Content:Mo.Common.GetIndexHtml}</div></eq>
+        </div>
+    </div>
+</loop>

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+<channel>
+   <title>{$System.title}</title>
+   <link>{$System.blog_hostname}{$$MO_ROOT}</link>
+   <description>{$System.blog_description}</description>
+   <generator>{$System.Master_Name}</generator>
+   <language>zh-CN</language>
+   <copyright>{$System.blog_copy_right:replace="&copy;",""}</copyright>
+   <pubDate>{$a:F.formatdate="yyyy-MM-dd HH:mm:ss"}</pubDate>
+   <loop name="list">
+   <item>
+      <title>{$list.Title}</title>
+      <author>{$list.Actor}</author>
+      <link>{$System.blog_hostname}{$$MO_ROOT}<rewrite>?m=home&amp;a=show&amp;id={$list.id}</rewrite></link>
+      <pubDate>{$list.AddDate:F.formatdate="yyyy-MM-dd HH:mm:ss"}</pubDate>
+      <guid>{$list.id:Mo.Base64.encode}</guid>
+      <description><![CDATA[{$list.Content:Mo.Common.ResetImageUri}]]></description>
+      <category>{$list.ClassID:Mo.Common.getCat}</category>
+   </item>
+</loop>
+</channel>
+</rss>

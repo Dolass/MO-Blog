@@ -1,0 +1,177 @@
+﻿<include file="nav" />
+<div class="nav">首页 &gt; <a href="{$$MO_ROOT}?m=admin&a=album">我的相册</a> | 当前相册：{$Album.name} 
+<span id="divAddFiles"></span><span id="ErrMsg"></span><span id="Upload_Processer"></span>
+</div>
+<div class="right_main_b">
+<form action="{$$MO_ROOT}" method="get">
+<a href="javascript:SelectItem(1)">全选</a> <a href="javascript:SelectItem(2)">不选</a> <a href="javascript:SelectItem(3)">反选</a> <a href="javascript:DeleteSelected()">删除所选</a>
+</form>
+<ul class="photos clearfix">
+<loop name="Photos" eof="&lt;tr&gt;&lt;td colspan=8&gt;还没有照片&lt;/td&gt;&lt;/tr&gt;">
+<li rel="{$Photos.id}">
+<div class="image_loader"><a href="{$mo.c.Blog.AlbumPath}{$Photos.path}" target="_blank">
+<img src="{$mo.c.Blog.AlbumPath}{$Photos.t_path}" width="{$Photos.t_width}" height="{$Photos.t_height}" title="{$Photos.name}" alt="{$Photos.name}" />
+</a></div><input type="button" class="inputButton btnMod" value="修改" /> <input type="button" class="inputButton btnDelete" value="删除" /> {$Photos.width}*{$Photos.height}
+<input type="checkbox" />
+</li>
+</loop>
+</ul>
+</div>
+<script type="text/javascript">
+F("ul.photos li[rel] img").lazyLoad({replaceHolder:"{$$MO_ROOT}Images/blank.gif",offset:0});
+</script>
+<div id="dialog" title="" style="display:none"></div>
+<script type="text/javascript" src="{$$MO_ROOT}Scripts/swfupload/swfupload.js"></script>
+<script type="text/javascript" src="{$$MO_ROOT}Scripts/swfupload/swfupload.usage.js"></script>
+<script type="text/javascript" src="{$$MO_ROOT}Scripts/swfupload/swfupload.extend.album.js"></script>
+<script type="text/javascript">
+function DeleteSelected(){
+	var list=[];
+	F("ul.photos :checkbox").each(function(){
+		if(this.checked)list.push(F(this.parentNode).attr("rel"));								   
+	})
+	if(list.length<=0){F("#dialog").dialog({"content":"没选择任何照片",buttons:{"确定":function(){}}});return;}
+	mutidelete(list.join(","));
+}
+
+function SelectItem(ty){
+	if(ty==1)
+	F("ul.photos :checkbox").each(function(){this.checked=true;});	
+	if(ty==2)
+	F("ul.photos :checkbox").each(function(){this.checked=false;});	
+	if(ty==3)
+	F("ul.photos :checkbox").each(function(){this.checked=!this.checked;});	
+}
+function mutidelete(id){
+	if(window.confirm("确定要删除所选照片吗？")){
+		F.ajax({
+			url:"{$$MO_ROOT}?m=ajax&a=deletephotos&id=" + id,
+			succeed:function(msg){
+				F("#dialog").dialog({"content":msg,buttons:{"确定":function(){}}});
+				if(msg.indexOf("已删除")>=0){
+					F(id.split(",")).each(function(){F("li[rel='" + this + "']").remove();});
+					F("#dialog").dialog("close");
+				}
+			}
+		});
+	}
+	return false;
+}
+F(function(){
+	create();
+	F("ul.photos li[rel] input.btnDelete").click(function(){
+		if(window.confirm("确定要删除本照片吗？")){
+			var id = F(this.parentNode).attr("rel");
+			F.ajax({
+				url:"{$$MO_ROOT}?m=ajax&a=deletephoto&id=" + id,
+				succeed:function(msg){
+					if(msg.indexOf("已删除")>=0){
+						F("li[rel='" + id + "']").remove();
+						F("#dialog").dialog("close");
+					}
+				}
+			});
+		}
+		return false;	
+	});
+	F("ul.photos li[rel]").each(function(){
+		F(this).find("input.btnMod").click(function(){
+			var id = F(this.parentNode).attr("rel");
+			F("#dialog").attr("title","修改照片信息").html("正在加载。。。").dialog({height:200,buttons:null});
+			F.ajax({
+				url:"{$$MO_ROOT}?m=ajax&a=photo&id=" + id,
+				succeed:function(msg){
+					F("#dialog").html(msg).dialog({height:360,maxHeight:400,
+						buttons:{
+							"保存信息":function(){
+								F.ajax({
+									form:document.forms['frmsubmit'],
+									succeed:function(msg){
+										F("#dialog").html(msg).dialog({buttons:{"确定":function(){}},height:200});
+									}
+								});
+							},
+							"删除":function(){
+								if(window.confirm("确定要删除本照片吗？")){
+									F.ajax({
+										url:"/?m=ajax&a=deletephoto&id=" + id,
+										succeed:function(msg){
+											F("#dialog").dialog({"content":msg,buttons:{"确定":function(){}}});
+											if(msg.indexOf("已删除")>=0){
+												F("li[rel='" + id + "']").remove();
+												F("#dialog").dialog("close");
+											}
+										}
+									});
+								}
+								return false;	
+							},
+							"取消":function(){}	
+						}
+					});					
+				}
+			});
+		});
+	});	   
+});
+var swfu=null;
+var total=0;
+var succeed=0;
+var failed=0;
+var create=(function(setting){
+	return function(){
+		try{swfu.destroy()}catch(ex){}
+		setting.handlers=Clone(HANDLERS);
+		swfu=SWFUpload.New(setting);
+	}
+})({
+	flash_url:"{$$MO_ROOT}Scripts/swfupload/swfupload.swf",
+	upload_url: "{$$MO_ROOT}?m=admin&a=upload&auto=false&album=true&albumname={$Album.tag}&albumid={$Album.id}",
+	button_append : "divAddFiles",
+	button_width: 60,
+	button_height:18,
+	button_text: "<span class=\"but\">上传照片</span>",
+	button_text_style:".but {color:#ff0000;font-weight:bold;}",
+	button_text_left_padding: 3,
+	button_text_top_padding: 1,
+	filter:{
+		post_name : "filedata",
+		types : "*.jpg;*.gif;*.png;*.bmp;",
+		types_description : "图片文件",
+		size_limit : "10 mb",
+		upload_limit : 1000
+	},
+	auto:false
+});
+function Uploaded(){
+	if(this.error==0){
+		succeed++;
+		F("#ErrMsg").html("剩余：" + (total-succeed-failed) + "张！");
+		if(total-succeed-failed<=0)window.location.reload();
+	}else{F("#ErrMsg").html(this.message);failed++;}
+}
+function Clone(object)
+ {
+    var objClone;
+    if ( object.constructor == Object ) objClone = new object.constructor(); 
+    else objClone = new object.constructor(object.valueOf()); 
+    for ( var key in object )
+    {
+        if ( objClone[key] != object[key] )
+        { 
+            if ( typeof(object[key]) == 'object' )
+            { 
+                objClone[key] = Clone(object[key]);
+            }
+            else
+            {
+                objClone[key] = object[key];
+            }
+        }
+    }
+    objClone.toString = object.toString;
+    objClone.valueOf = object.valueOf;
+    return objClone; 
+ }
+</script>
+<include file="foot" />

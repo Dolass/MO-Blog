@@ -1,0 +1,78 @@
+﻿<include file="Head" />
+<div id="mo-body-left">
+	<eq name="System.blog_allow_guestbook" value="yes">
+    <div class="mo-box-left">
+        <div class="mo-box-left-content">
+            <h4 onclick="F('#guest_book_form').toggle();" style="cursor:pointer; text-decoration:underline">给我留言</h4>
+            <div class="mo-box-left-diary" id="guest_book_form">
+            <form action="{$$MO_ROOT}?m=home&a=saveguest" method="post" onsubmit="return CheckGuestPost(this);">
+            	<h3>留言内容：</h3>
+                <textarea type="text" class="inputTextUser width_450 height_100" name="content"></textarea> * 这个得填！
+            	<h3>您的名字：</h3>
+                <input type="text" class="inputText width_150" name="name" value="匿名" onfocus="if(this.value=='匿名')this.value='';" onblur="if(this.value=='')this.value='匿名';" /> 这个可以填哈~
+            	<h3>您的邮箱：</h3>
+                <input type="text" class="inputText width_150" name="email" /> 回复您的时候您可以收到邮件的~
+            	<h3>您的主页：</h3>
+                <input type="text" class="inputText width_150" name="homepage" />
+            	<h3>验证码：</h3>
+                <input type="text" class="inputText width_90" name="code" />
+                <img id="code" style="border:1px solid #666; padding:6px; cursor:pointer" src="{$$MO_ROOT}?m=home&a=safecode" title="点击刷新验证码" onclick="this.src='{$$MO_ROOT}?m=home&a=safecode&r=' + Math.random()" />
+                <input type="checkbox" name="secret" value="yes" /> 只给管理员看
+                <input type="submit" class="inputButton" value="提交留言" />
+            </form>
+            <script type="text/javascript">
+			function CheckGuestPost(frm){
+				if(frm['content'].value==""){MessageBox.showError('请填写留言内容啦！');return false;}
+				if(frm['content'].value.length>512){MessageBox.showError('留言内容太多咯！');return false;}
+				if(frm['name'].value!="" && frm['name'].value.length>30){MessageBox.showError('咦？您的名字这么长的？');return false;}
+				if(!/\d{4}/i.test(frm['code'].value)){MessageBox.showError('请填写正确的验证码！');return false;}
+				F.ajax({
+					form:frm,
+					succeed:function(msg){
+						if(msg.indexOf("成功提交啦")>=0){
+							MessageBox.showInformation(msg);
+							window.setTimeout(function(){window.location.reload();},1000);
+						}else{
+							MessageBox.showError(msg);
+							F("#code").attr("src","{$$MO_ROOT}?m=home&a=safecode&r=" + Math.random());
+						}
+					},
+					error:function(){
+						MessageBox.showError("哎呀，服务器错误啦！");
+						F("#code").attr("src","{$$MO_ROOT}?m=home&a=safecode&r=" + Math.random());
+					}
+				});
+				return false;
+			}
+			</script>
+            </div>
+        </div>
+    </div>
+    <loop name="List" eof="&lt;div class="mo-box-eof"&gt;Oh,my God!木有任何人留言啊！&lt;/div&gt;">
+    <a name="g{$List.id}"></a>
+    <div class="mo-box-left mo-guestbook">
+        <div class="mo-box-left-content">
+            <h4>
+            <nempty name="List.email"><img src="http://www.gravatar.com/avatar/{$List.email:Md5}?s=32&r=G&d=http%3A%2F%2Fwww.9fn.net%2FImages%2Fnofind.jpg" alt="{$List.name}" /></nempty>
+            {$List.name:Server.HtmlEncode}<span>[{$List.ly_date:F.formatdate="yyyy-MM-dd HH:mm:ss"}]</span></h4>
+            <div class="mo-box-left-diary">{$List.content}</div>
+            <nempty name="List.rely">
+            <div class="box-replay">
+            	<h3>[{$List.ly_date:F.formatdate="yyyy-MM-dd HH:mm:ss"}]回复：</h3>
+                <div class="replay-content">{$List.rely}</div>
+            </div>
+            </nempty>
+        </div>
+    </div>
+    </loop>
+    <div class="pagestr"><page for="List" url="{$$MO_ROOT}<rewrite>?m=home&a=guest&page={#page}</rewrite>" /></div>
+    </else>
+    <div class="mo-box-left mo-linkstext">
+        <div class="mo-box-left-content">
+            <h2>嘿嘿！管理员关闭了留言簿！</h2>
+        </div>
+    </div>
+    </eq>
+</div>
+<include file="Right" />
+<include file="Foot" />

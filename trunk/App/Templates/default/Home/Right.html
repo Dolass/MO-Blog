@@ -1,0 +1,128 @@
+﻿<div id="mo-body-right">
+    <div class="mo-box-right">
+        <div class="mo-box-right-content">
+            <h2 id="weather_title">天气预报</h2>
+            <div id="weather_content">加载中...</div>
+        </div>
+    </div>
+    <div class="mo-box-right">
+        <div class="mo-box-right-content">
+            <h2>我的博客</h2>
+            <ul class="cats">
+                <li><a href="{$$MO_ROOT}<rewrite>?m=home&a=index</rewrite>">&raquo; 博客首页</a></li>
+                <loop name="cats">
+                <empty name="cats.Class_PName">
+                <li><a href="{$$MO_ROOT}<rewrite>?m=home&a=cats&cat={$cats.idlist}</rewrite>">&raquo; {$cats.Class_Name}({$cats.counts})</a> [<a href="{$$MO_ROOT}<rewrite>?m=home&a=rss&catid={$cats.idlist}</rewrite>" target="_blank">RSS</a>]</li>
+                </else>
+                <li class="sub"><a href="{$$MO_ROOT}<rewrite>?m=home&a=cats&cat={$cats.idlist}</rewrite>">&nbsp; &nbsp;{$cats.Class_Name}({$cats.counts})</a> [<a href="{$$MO_ROOT}<rewrite>?m=home&a=rss&catid={$cats.idlist}</rewrite>" target="_blank">RSS</a>]</li>
+                </empty>
+                </loop>
+                <li><a href="{$$MO_ROOT}<rewrite>?m=home&a=links</rewrite>">&raquo; 友情链接</a> | <a href="{$$MO_ROOT}<rewrite>?m=home&a=guest</rewrite>">访客留言簿</a> | <a href="{$$MO_ROOT}?m=admin">管理博客</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="mo-box-right">
+        <div class="mo-box-right-content">
+            <h2>博客搜索</h2>
+            <form action="{$$MO_ROOT}" method="get">
+            <input type="hidden" name="m" value="home" /><input type="hidden" name="a" value="search" />
+            关键字：<input type="text" class="inputText width_100" name="keyword" /> <input class="inputButton" type="submit" value="搜索" />
+            </form>
+        </div>
+    </div>
+    <div class="mo-box-right">
+        <div class="mo-box-right-content">
+            <h2>相册</h2>
+            <ul class="cats index-album clearfix">
+            <loop name="Albums">
+                <li><a href="{$$MO_ROOT}<rewrite>?m=home&a=photos&id={$Albums.id}</rewrite>"><img src="{$mo.c.Blog.AlbumPath}{$Albums.t_path}" width="96" title="{$Albums.name}" alt="{$Albums.name}" /></a></li>
+            </loop>
+            </ul>
+        </div>
+    </div>
+    <div class="mo-box-right">
+        <div class="mo-box-right-content">
+            <h2>最新评论</h2>
+            <ul class="cats">
+            <loop name="Comments">
+                <li><a href="{$$MO_ROOT}<rewrite>?m=home&a=show&id={$Comments.article_id}</rewrite>#c{$Comments.id}">&raquo; {$Comments.content:left=30}</a></li>
+            </loop>
+            </ul>
+        </div>
+    </div>
+    <div class="mo-box-right">
+        <div class="mo-box-right-content">
+            <h2>最新留言</h2>
+            <ul class="cats">
+            <loop name="Guests">
+                <li><a href="{$$MO_ROOT}<rewrite>?m=home&a=guest</rewrite>#g{$Guests.id}">&raquo; {$Guests.Content:Mo.Common.IndexRight}</a></li>
+            </loop>
+            </ul>
+        </div>
+    </div>
+    <div class="mo-box-right">
+        <div class="mo-box-right-content">
+            <h2>标签云集</h2>
+            <div class="cats_tags clearfix">
+            <loop name="TagsCloud">
+                <a href="{$$MO_ROOT}<rewrite>?m=home&a=tag&keyword={$TagsCloud.tag}</rewrite>" title="引用{$TagsCloud.counts}次">{$TagsCloud.name}</a>&nbsp; 
+            </loop>
+            </div>
+        </div>
+    </div>
+    <div class="mo-box-right">
+        <div class="mo-box-right-content">
+            <h2>文章归档</h2>
+            <ul class="cats">
+            <loop name="Librarys">
+                <li><a href="{$$MO_ROOT}<rewrite>?m=home&a=library&keyword={$Librarys.library:F.encode}</rewrite>" title="{$Librarys.library}">&raquo; {$Librarys.library}({$Librarys.num})</a></li>
+            </loop>
+            </ul>
+        </div>
+    </div>
+    <div class="mo-box-right">
+        <div class="mo-box-right-content">
+            <h2>友情链接</h2>
+            <ul class="cats">
+            <loop name="Links">
+                <li><a href="{$Links.url}" onclick="return clicklink({$Links.id});" target="_blank" title="{$Links.author}=>{$Links.title}">&raquo; {$Links.title}</a></li>
+            </loop>
+                <li><a href="{$$MO_ROOT}<rewrite>?m=home&a=links</rewrite>">---申请友情链接---</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+F("div.cats_tags a").each(function(){
+	var color="rgb(" + parseInt(64+Math.random()*128) + "," + parseInt(64+Math.random()*128) + "," + parseInt(64+Math.random()*128) + ")";
+	var count = parseInt(this.title.replace(/^引用(\d+)次$/ig,"$1"));
+	if(count<1)count=1;
+	var size = Math.log(count+1)/Math.log(3);
+	this.style.color=color;
+	this.style.fontSize=Math.ceil(12+size*2-1)+"px";
+});
+function clicklink(id){Ajax({url:"{$$MO_ROOT}?m=home&a=clicklink&id=" + id});return true;}
+function getWeather(Weather){
+	if(Weather){
+		if(Weather["weather"]!=null){
+			var W = Weather["weather"];	
+			var wstr = "<span class=\"title\">" + W.city + "(" + W.date_y + W.fchh + "时)</span>";
+			F("#weather_title").html(wstr.replace(/(\d+)/igm,"<span style=\"color:green\">$1</span>"));
+			wstr =W.date + " " + W.week;
+			wstr +=W.temp1 + "," + W.weather1;
+			if(W.img1!="99")wstr +="<img src='http://dev.mo.cn/kits/weather/icons/c" + W.img1 + ".gif' alt='" + W.img_title1 + "' />";
+			if(W.img2!="99")wstr +="<img src='http://dev.mo.cn/kits/weather/icons/c" + W.img2 + ".gif' alt='" + W.img_title2 + "' />";
+			wstr +="," + W.wind1 + "。<br />";
+			wstr +=W.index_d+"<br />";
+			wstr +="<strong>明天</strong>："+W.temp2 + "," + W.weather2 + "," + W.wind2+"<br />";
+			F("#weather_content").html(wstr.replace(/(\d+)([^\w\.]{1})/igm,"<span style=\"color:green\">$1</span>$2"));
+		}else{
+			F("#weather_title").html(Weather['city']-Weather['prov']);
+			F("#weather_content").html("天气加载失败");
+		}
+	}else{
+		F("#weather_content").html("天气加载失败");
+	}
+}
+</script>
+<script type="text/javascript" src="http://dev.mo.cn/kits/weather/?callback=getWeather" defer="defer"></script>

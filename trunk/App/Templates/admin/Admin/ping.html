@@ -1,0 +1,10 @@
+﻿<?xml version="1.0"?>
+<methodCall>
+<methodName>{$ping_method}</methodName>
+<params>
+<param><value>{$blog_title:F.encodeHtml}</value></param>
+<param><value>{$blog_hostname}{$$MO_ROOT}</value></param>
+<param><value>{$blog_hostname}{$$MO_ROOT}?m=home&amp;a=show&amp;id={$aid}</value></param>
+<param><value>{$blog_hostname}{$$MO_ROOT}?m=home&amp;a=atom</value></param>
+</params>
+</methodCall>

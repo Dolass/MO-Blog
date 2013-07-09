@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-cn" lang="zh-cn">
+ <head>
+     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+     <meta name="AUTHOR" content="Anlige,zhanghuiguoanlige@126.com" />
+     <meta name="Copyright" content="copyright 2008 dev.mo.cn" />
+     <title>登录管理后台</title>
+	<script type="text/javascript" src="{$$MO_ROOT}Scripts/s.js"></script>
+	<script type="text/javascript" src="{$$MO_ROOT}Scripts/f.js"></script>
+	<script type="text/javascript" src="{$$MO_ROOT}Scripts/f.e.js"></script>
+	<script type="text/javascript" src="{$$MO_ROOT}Scripts/f.ajax.js"></script>
+    <script type="text/javascript">
+	var MessageType={Error:1,Notice:2,Information:3};
+	var MessageBox={show:function(message,mt){var classname="information";if(mt==MessageType.Error)classname="error";if(mt==MessageType.Notice)classname="notice";F("#mo-tips").css({"display":"block"});F("#mo-tips-content").html(message).Class(classname);window.setTimeout(function(){F("#mo-tips").css({"display":"none"});},1500);},showError:function(message){MessageBox.show(message,MessageType.Error);},showNotice:function(message){MessageBox.show(message,MessageType.Notice);},showInformation:function(message){MessageBox.show(message,MessageType.Information);}};
+	</script>
+    <link href="{$$MO_APP}Templates/{$C.MO_TEMPLATE_NAME}/Home/layout.css" rel="stylesheet" />
+ </head>
+ <body>
+ 	<div style="width:280px; text-align:left; margin:50px auto">
+        <div class="mo-box-right">
+            <div class="mo-box-right-content">
+                <h2>登录管理面板 | <a href="{$$MO_ROOT}">返回首页</a></h2>
+                <form action="{$$MO_ROOT}?m=login&a=doLogin" method="post" onsubmit="Mo_Login(this);return false;">
+                用户：<input type="text" class="inputText width_150" name="username" /><br /><br />
+                密码：<input type="password" class="inputText width_150" name="password" /><br /><br />
+                验证：<input type="text" class="inputText width_90" name="code" />
+                <img style="border:1px solid #666; padding:6px; cursor:pointer" src="{$$MO_ROOT}?m=home&a=safecode" id="code" title="点击刷新验证码" onclick="this.src='{$$MO_ROOT}?m=home&a=safecode&r=' + Math.random()" />
+                <input type="submit" class="inputButton width_50" value="登录" />
+                </form>
+                <script type="text/javascript">
+				function Mo_Login(frm){
+					if(F.trim(frm["username"].value)==""){MessageBox.showError("哎哟，用户名啊，快填！");frm["username"].focus();return;}
+					if(F.trim(frm["password"].value)==""){MessageBox.showError("密码没填！速度！");frm["password"].focus();return;}
+					if(F.trim(frm["code"].value)==""){MessageBox.showError("验证码啊！怎么能不填呢！！让验证码情何以堪！！！");frm["code"].focus();return;}
+					F.ajax({
+						form:frm,
+						succeed:function(msg){
+							if(msg.indexOf("登录成功")>=0){
+								MessageBox.showError("我靠！登陆成功了！");
+								window.location="{$$MO_ROOT}?m=admin&a=main"
+							}else{
+								MessageBox.showError("登录出错了哎！错误信息："+msg);
+							}
+							F("#code").attr("src","{$$MO_ROOT}?m=home&a=safecode&r=" + Math.random());
+						},
+						error:function(){MessageBox.showError("啊哟！服务器挂了！");
+							F("#code").attr("src","{$$MO_ROOT}?m=home&a=safecode&r=" + Math.random());}
+					});
+				}
+				</script>
+            </div>
+        </div>
+    </div>
+    <div id="mo-tips"><div id="mo-tips-content"></div></div>
+ </body>
+ </html>

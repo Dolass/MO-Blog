@@ -1,0 +1,14 @@
+﻿<include file="Head" />
+<div id="mo-body-left">
+    <loop name="diary" eof="&lt;div class="mo-box-eof"&gt;没有找到任何匹配记录哦！&lt;/div&gt;">
+        <div class="mo-box-left">
+            <div class="mo-box-left-content">
+                <h2><a href="{$$MO_ROOT}<rewrite>?m=home&a=show&id={$diary.id}</rewrite>">{$diary.Title}</a></h2>
+                <h3>{$diary.AddDate:FormatDate="01"}/标签：{$diary.Tags:Mo.Common.ActTags=true}<gt name="diary.views" value="0">/浏览：{$diary.views}次</gt></h3>
+            </div>
+        </div>
+    </loop>
+    <div class="pagestr"><page for="diary" url="{$$MO_ROOT}<rewrite>?m=home&a={$$MO_ACTION}&keyword={$#keyword:F.encode}&page={#page}</rewrite>" /></div>
+</div>
+<include file="Right" />
+<include file="Foot" />

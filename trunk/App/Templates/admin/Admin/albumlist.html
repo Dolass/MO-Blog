@@ -1,0 +1,70 @@
+﻿<include file="nav" />
+<div class="nav">首页 &gt; <a href="{$$MO_ROOT}?m=admin&a=album">我的相册</a> | <a href="javascript:void(0)" onclick="showdialog('{$$MO_ROOT}?m=ajax&a=album');return false;">新相册</a></div>
+<div class="right_main_b">
+<table width="100%" cellpadding="3" cellspacing="0" border="1" bordercolor="#a0b2d2">
+<tr>
+<th class="head" width="40">ID</th>
+<th class="head">名称</th>
+<th class="head">拍照地点</th>
+<th class="head">创建时间</th>
+<th class="head">拍照时间</th>
+<th class="head">排序</th>
+<th class="head">私人</th>
+<th class="head">操作</th>
+</tr>
+<loop name="Albums" eof="&lt;tr&gt;&lt;td colspan=8&gt;还没有相册&lt;/td&gt;&lt;/tr&gt;">
+<tr>
+<td align="center">{$Albums.id}</td>
+<td>{$Albums.name}</td>
+<td>{$Albums.address}</td>
+<td>{$Albums.create_date:F.formatdate="yyyy-MM-dd HH:mm:ss"}</td>
+<td align="center">{$Albums.photo_date:F.formatdate="yyyy-MM-dd HH:mm:ss"}</td>
+<td align="center">{$Albums.orderby}</td>
+<td align="center"><eq name="Albums.issecret" value="y">是</else>否</eq></td>
+<td align="center"><a href="{$$MO_ROOT}?m=admin&a=albumphotos&id={$Albums.id}">照片</a> |&nbsp;
+<a href="javascript:void(0)" onclick="showdialog('{$$MO_ROOT}?m=ajax&a=album&id={$Albums.id}');return false;">修改</a> |&nbsp;
+<a href="javascript:void(0)" onclick="if(window.confirm('确定要删除本相册吗？'))deletealbum({$Albums.id},'{$Albums.tag}',this)">删除</a></td>
+</loop>
+</table>
+<page for="Albums" />
+</div>
+<div id="dialog" title="" style="display:none"></div>
+<script type="text/javascript">
+<eq name="Mo.Get.new" value="yes">showdialog('{$$MO_ROOT}?m=ajax&a=album');</eq>
+function deletealbum(id,tag,o){
+	F.ajax({
+		url:"{$$MO_ROOT}?m=ajax&a=deletealbum&id=" + id +"&tag=" + encodeURIComponent(tag),
+		succeed:function(msg){
+			if(msg.indexOf("相册已删除")>=0){
+				o.parentNode.parentNode.parentNode.removeChild(o.parentNode.parentNode);
+			}else{
+				F("#dialog").attr("title","删除相册").html(msg).dialog({height:200,buttons:{"确定":function(){}}});
+			}
+		}
+	});	
+}
+function showdialog(url){
+	F("#dialog").attr("title","修改/添加相册").html("正在加载...").dialog({height:200,buttons:null});
+	F.ajax({
+		url:url,
+		succeed:function(msg){
+			F("#dialog").html(msg).dialog({height:500,maxHeight:500,
+				buttons:{
+					"保存信息":function(){
+						F.ajax({
+							form:document.forms['frmsubmit'],
+							succeed:function(msg){
+								var fn=function(){window.location="{$$MO_ROOT}?m=admin&a=album";};
+								if(msg.indexOf("已保存")<0)fn = function(){};
+								F("#dialog").html(msg).dialog({buttons:{"确定":fn},height:200});
+							}
+						});
+					},
+					"取消":function(){}	
+				}
+			});
+		}
+	});	
+}
+</script>
+<include file="foot" />

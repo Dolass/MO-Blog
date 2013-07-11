@@ -3,7 +3,7 @@
 
 一、基本环境需求
 
-本程序调试环境为Windows 2003+IIS6.0以及Windows 7+IIS7.5，原则上IIS5以上版本均可以正常运行；
+本程序调试环境为Windows 2003+IIS6.0以及Windows 7+IIS7.5，IIS6及以上版本均可以正常运行；
 请勿使用非IIS的web服务器调试，例如NetBox等；
 请启用相关文件夹的写入权限，包括
 

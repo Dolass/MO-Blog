@@ -23,14 +23,29 @@ __Record__.prototype.frompost=function(pk){
 			this.pk = F.post__[i];
 		}
 	}
+	return this;
 };
 __Record__.prototype.set=function(name,value,type){
 	type=type||"string";
 	delete this.table[name];
 	this.table[name]={"value":value,"type":type}
+	return this;
 };
-__Record__.prototype.remove=function(name){
-	delete this.table[name];
+__Record__.prototype.get=function(name){
+	if(this.table[name]!==undefined)return this.table[name].value;
+	return "";
+};
+__Record__.prototype.remove=function(){
+	for(var i=0;i<arguments.length;i++){
+		delete this.table[arguments[i]];
+	}
+	return this;
+};
+
+__Record__.prototype.clear=function(){
+	delete this.table;
+	this.table={};
+	return this;
 };
 __Record__.prototype.assign=function(name){
 	var obj = {};
@@ -39,5 +54,6 @@ __Record__.prototype.assign=function(name){
 		obj[i]=	this.table[i].value;
 	}
 	Mo.assign(name,obj);
+	return this;
 };
 </script>

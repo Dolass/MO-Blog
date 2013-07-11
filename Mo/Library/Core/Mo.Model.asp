@@ -1,33 +1,45 @@
 ﻿<script language="jscript" runat="server">
 //var conn__=null;
-var Model__List=[];
-var Model__Debug=[];
-function Model__(tablename,pk){
-	Model__List.push(new __Model__(tablename,pk));
-	return Model__List[Model__List.length-1];	
+function Model__(tablename,pk,dbConf){
+	Model__.list.push(new __Model__(tablename,pk,dbConf));
+	return Model__.list[Model__.list.length-1];	
 }
-Model__.connection = null;
-Model__.db = {};
+Model__.defaultDBConf = "DB";
+Model__.list=[];
+Model__.debugs=[];
+Model__.connections = [];
+Model__.connectionsIndex = {};
+
 Model__.isobject=function(src){var ty=(typeof src);return (ty=="function" || ty=="object");};
+Model__.setDefault = function(dbConf){Model__.defaultDBConf = dbConf || "DB";};
+Model__.connection=function(dbConf){
+	if(Model__.connectionsIndex[dbConf]===undefined)return null;
+	return Model__.connections[Model__.connectionsIndex[dbConf]][0];
+};
 Model__.dispose=function(){
-	while(Model__List.length>0){
-		var M = Model__List.pop();
-		M.dispose();
+	while(Model__.list.length>0){
+		var M = Model__.list.pop().dispose();
 		M = null;
 	}
-	try{Model__.connection.close();}catch(ex){}
-	Model__.connection = null;
-	Model__.db = null;
+	while(Model__.connections.length>0){
+		var M = Model__.connections.pop();
+		try{
+			M[0].close();
+			Model__.debugs.push("database(" + M[2] +") disconnected");
+		}catch(ex){
+			Model__.debugs.push("database(" + M[2] +") disconnect failed");
+		}
+		M[0] = null;
+		M = null;
+	}
+	delete Model__.connectionsIndex;
+	Model__.connectionsIndex = {};
 };
 Model__.debug=function(){
-	for(var i in Model__Debug){
-		if(typeof Model__Debug[i]!="string")continue;
-		F.echo(Model__Debug[i]+"<br />")	;
-	}	
+	F.echo(Model__.debugs.join("<br />"));
 };
 function __Model__(tablename,pk,dbConf){
-	Model__.db["DB_Type"] = "ACCESS";
-	dbConf = dbConf ||"DB";
+	dbConf = dbConf ||Model__.defaultDBConf;
 	this.table = tablename||"";
 	this.table=MO_TABLE_PERX+this.table;
 	this.fields="*";
@@ -46,22 +58,32 @@ function __Model__(tablename,pk,dbConf){
 	this.pagestr="";
 	this.rc=0;
 	this.pageurl_="";
-	this.id="#"+Model__List.length;
+	this.id="#"+Model__.list.length;
 	this.rs__=null;
 	this.object_cache=null;
-	if(Model__.connection==null){
-		Model__.connection = new ActiveXObject("adodb.connection");	
-		Model__.db = Mo.C(dbConf);
+	this.connectionIndex=-1;
+	this.dbConf=null;
+	if(Model__.connectionsIndex[dbConf]===undefined){
+		Model__.connections.push([new ActiveXObject("adodb.connection"),Mo.C(dbConf),dbConf]);	
+		this.connectionIndex = 	Model__.connections.length-1;
+		Model__.connectionsIndex[dbConf] = this.connectionIndex;
+		this.dbConf = Model__.connections[this.connectionIndex][1];
 		try{
-			if(Model__.db["DB_Type"]=="ACCESS"){
-				Model__.connection.open("provider=microsoft.jet.oledb.4.0; data source=" + F.mappath(Model__.db["DB_Path"]));
-			}else if(Model__.db["DB_Type"]=="SQLSERVER"){
-				Model__.connection.open(F.format("provider=sqloledb.1;Persist Security Info=false;data source={0};User ID={1};pwd={2};Initial Catalog={3}",Model__.db["DB_Server"],Model__.db["DB_Username"],Model__.db["DB_Password"],Model__.db["DB_Name"]));
+			Model__.debugs.push("connect to database(" + dbConf +")");
+			if(this.dbConf["DB_Type"]=="ACCESS"){
+				Model__.connections[this.connectionIndex][0].open("provider=microsoft.jet.oledb.4.0; data source=" + F.mappath(this.dbConf["DB_Path"]));
+			}else if(this.dbConf["DB_Type"]=="SQLSERVER"){
+				Model__.connections[this.connectionIndex][0].open(F.format("provider=sqloledb.1;Persist Security Info=false;data source={0};User ID={1};pwd={2};Initial Catalog={3}",this.dbConf["DB_Server"],this.dbConf["DB_Username"],this.dbConf["DB_Password"],this.dbConf["DB_Name"]));
 			}
+			Model__.debugs.push("database(" + dbConf +") connect successfully");
 		}catch(ex){
-			Model__.connection=null;
-			Model__.db=null;
+			Model__.connections.pop();
+			this.dbConf=null;
+			Model__.debugs.push("database(" + dbConf +") connect failed");
 		}
+	}else{
+		this.connectionIndex = 	Model__.connectionsIndex[dbConf];
+		this.dbConf = Model__.connections[this.connectionIndex][1];
 	}
 }
 __Model__.prototype.pageurl=function(url){
@@ -104,14 +126,14 @@ __Model__.prototype.limit=function(page,limit,pagekeyorder,pagekey){
 };
 __Model__.prototype.max=function(filed){
 	var k = filed||this.pk;
-	if(Model__.db["DB_Type"]=="SQLSERVER"){
+	if(this.dbConf["DB_Type"]=="SQLSERVER"){
 		return this.query("select isnull(max(" + k + "),0) from " + this.table + (this.strwhere!=""?(" where " + this.strwhere):""))(0).value;	
 	}
 	return this.query("select iif(isnull(max(" + k + ")),0,max(" + k + ")) from " + this.table + (this.strwhere!=""?(" where " + this.strwhere):""))(0).value;	
 };
 __Model__.prototype.min=function(filed){
 	var k = filed||this.pk;
-	if(Model__.db["DB_Type"]=="SQLSERVER"){
+	if(this.dbConf["DB_Type"]=="SQLSERVER"){
 		return this.query("select isnull(min(" + k + "),0) from " + this.table + (this.strwhere!=""?(" where " + this.strwhere):""))(0).value;	
 	}
 	return this.query("select iif(isnull(min(" + k + ")),0,min(" + k + ")) from " + this.table + (this.strwhere!=""?(" where " + this.strwhere):""))(0).value;	
@@ -122,7 +144,7 @@ __Model__.prototype.count=function(filed){
 };
 __Model__.prototype.sum=function(filed){
 	var k = filed||this.pk;
-	if(Model__.db["DB_Type"]=="SQLSERVER"){
+	if(this.dbConf["DB_Type"]=="SQLSERVER"){
 		return this.query("select isnull(sum(" + k + "),0) from " + this.table + (this.strwhere!=""?(" where " + this.strwhere):""))(0).value;	
 	}
 	return this.query("select iif(isnull(sum(" + k + ")),0,sum(" + k + ")) from " + this.table + (this.strwhere!=""?(" where " + this.strwhere):""))(0).value;	
@@ -157,10 +179,9 @@ __Model__.prototype.cname=function(str){
 };
 
 __Model__.prototype.query=function(){
-	if(Model__.connection==null)return this;
 	if(arguments.length==1){
-		Model__Debug.push(arguments[0]);
-		return Model__.connection.execute(arguments[0]);	
+		Model__.debugs.push(arguments[0]);
+		return Model__.connections[this.connectionIndex][0].execute(arguments[0]);	
 	}
 	this.dispose();
 	this.rs__=new ActiveXObject("adodb.recordset");
@@ -183,11 +204,11 @@ __Model__.prototype.query=function(){
 		if(this.strpage>1)where_ +=" " + (where_!=""?"and":"where") + " " + this.pagekey + " not in(select top " + this.strlimit * (this.strpage-1) + " " + this.pagekey + " from " +this.table + cname + join + on + where_ + groupby+ order_ +")"	;
 		sql="select top " + this.strlimit + " " + this.fields + " from " + this.table + cname + join + on + where_ + groupby+ order_;	
 	}
-	Model__Debug.push(sql);
-	this.rs__.open(sql,Model__.connection,1,1);
+	Model__.debugs.push(sql);
+	this.rs__.open(sql,Model__.connections[this.connectionIndex][0],1,1);
 	if(this.strlimit>0){
-		Model__Debug.push(this.countsql);
-		this.rc = Model__.connection.execute(this.countsql)(0).value;
+		Model__.debugs.push(this.countsql);
+		this.rc = Model__.connections[this.connectionIndex][0].execute(this.countsql)(0).value;
 	}
 	return this;
 };
@@ -202,6 +223,8 @@ __Model__.prototype.fetch=function(){
 		if(this.pagekeyorder=="")this.rs__.absolutepage = this.strpage;
 	}
 	this.object_cache = new __Obj__(this.rs__,this.strlimit);
+	try{this.rs__.close();}catch(ex){}
+	this.rs__ = null;
 	this.object_cache.pagesize = this.strlimit;
 	this.object_cache.recordcount = this.rc;
 	this.object_cache.currentpage = this.strpage;

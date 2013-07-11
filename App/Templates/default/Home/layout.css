@@ -40,8 +40,8 @@ img { border:0}
 #mo-nav { text-align:left; margin:0 auto; width:940px; line-height:30px }
 #mo-nav ul li{ float:left; padding:0 20px 0 0px; height:30px; line-height:30px}
 #mo-body { width:960px; margin:10px auto; text-align:left}
-#mo-body-left{ width:710px; float:left; text-align:center}
-#mo-body-right{ width:240px; float:left; margin-left:10px}
+#mo-body-left{ width:700px; float:left; text-align:center}
+#mo-body-right{ width:250px; float:left; margin-left:10px}
 #mo-foot { width:960px; margin:0 auto; text-align:left}
 #mo-bottom{ width:960px; margin:0 auto;padding-top:15px;}
 

@@ -56,7 +56,7 @@ class MoAspEnginer
 		if F.fso.FileExists(F.mappath(MO_APP & "Config/Config.asp")) then Execute LoadAsp(F.mappath(MO_APP & "Config/Config.asp"),"utf-8")
 	end sub
 	
-	private sub Class_Terminate()
+	private sub dispose()
 		dim d
 		for each d in mvarDicts
 			if isobject(mvarDicts(d)) then set mvarDicts(d)=nothing
@@ -401,6 +401,7 @@ class MoAspEnginer
 		end if
 		Set ModelClass = Nothing
 		Call End__()
+		Call dispose()
 		Call Debug_()
 	end sub
 	private function LoadModel(byval path,byval model)

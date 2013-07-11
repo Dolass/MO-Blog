@@ -72,25 +72,24 @@ class ActionHome
 		loop
 		Mo.assign "cats",list
 		Model__("Links","id").where("ischecked=1").select("top 20 title,url,author,id").orderby("link_order desc").query().assign "Links"
-		Model__("Guestbook","id").select("top 10 id,pid as article_id,content,name").where("forarticle=1 and secret='no'").orderby("id desc").query().assign "Comments"
-		Model__("Guestbook","id").select("top 10 id,pid,Content,name").where("forarticle=0 and secret='no'").orderby("id desc").query().assign "Guests"
+		Model__("Guestbook","id").select("top 10 id,pid as article_id,content,name").where("forarticle=1 and secret='no' and checked=1").orderby("id desc").query().assign "Comments"
+		Model__("Guestbook","id").select("top 10 id,pid,Content,name").where("forarticle=0 and secret='no' and checked=1").orderby("id desc").query().assign "Guests"
 		Model__("Album","id").select("top 6 id,name,(select top 1 t_path from Mo_Album_Photos where albumid=Mo_Album.id order by isfirst desc,id desc) as t_path").where("issecret='n'").orderby("orderby desc,id desc").query().assign "Albums"
 	end sub
 	private sub Class_Terminate()
 	end sub
 	
 	public sub Index
-		Call common__()
-		Model__("Diary","id").select("top 10 *").where("Is_Secret=0").orderby("Is_Top desc,id desc").query().assign "diary"
+		Model__("Diary","id").limit(F.get.int("page",1),10).where("Is_Secret=0").orderby("Is_Top desc,id desc").query().assign "diary"
 		if F.get("ajax")="true" then
 			Mo.display "IndexArticle"
 		else
+			Call common__()
 			Mo.display "Index"
 		end if
 	end sub
 	
 	public sub cats
-		Call common__()
 		dim pid,sqlwhere
 		pid = F.get.int("cat",0,true)
 		Mo.Assign "self_title","文章 - "
@@ -103,6 +102,7 @@ class ActionHome
 		if F.get("ajax")="true" then
 			Mo.display "IndexArticle"
 		else
+			Call common__()
 			Mo.display "Index"
 		end if
 	end sub
@@ -287,6 +287,7 @@ class ActionHome
 		end if
 	end sub
 	public sub [empty](action)
+		Call common__()
 		Response.Status = "404 Not Found"
 		Mo.Assign "action",action
 		Mo.display "Error"
